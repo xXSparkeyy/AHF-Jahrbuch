@@ -9,7 +9,9 @@
 			$l = new Registration();
 			$l->register( $_POST["user_name"], $_POST["user_pw"] );
 			if( !$l->getError() ) {
-				header( "Location: /profile/".$l->user );
+				$usr = $l->user;
+				$log( "Profile", "$usr joined" );
+				header( "Location: /profile/$usr/edit/" );
 				break;
 			}
 			else {
