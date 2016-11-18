@@ -39,7 +39,7 @@
 <script>
 	document.getElementById( "loginbutton" ).onclick = function() {
 		var n = document.getElementById( "user_name" ).value
-		var p = document.getElementById( "user_pw"   ).value
+		var p = md5(document.getElementById( "user_pw"   ).value)
 		document.getElementById( "loginhash" ).value = md5(n+p+Math.floor(Date.now()/1000));
 		document.getElementById( "loginform" ).submit();
 	}

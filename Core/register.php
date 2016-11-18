@@ -133,6 +133,7 @@ class Registration {
 			$this->error = $moodleData["status"];
 			return false;
 		}
+		$password = md5( $password );
 		$status = $this->writeEntry( $username, $password, $moodleData["name"][0], $moodleData["name"][1] );
 		if( $status != REGISTRATION_SUCCESSFULL ) {
 			$this->error = $status;
