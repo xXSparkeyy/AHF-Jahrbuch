@@ -1,2 +1,2 @@
-# Literatur
-Eig ne Jahrbuch, hoffe Marius kriegt das mit git gebacken!
+# Yearbook
+PHP Project to gather pupils data for the yearbook
