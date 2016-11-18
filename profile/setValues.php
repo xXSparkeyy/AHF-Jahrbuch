@@ -1,6 +1,7 @@
 <?php require_once $_SERVER["DOCUMENT_ROOT"]."/Core/index.php";
 	if( count( $_GET ) > 0 ) {
-		$p = new Profile( Login::checkUser()["user_id"] );
+		$usr = Login::checkUser()["user_id"];
+		$p = new Profile( $usr );
 		$firstname= "";
 		$lastname = "";
 		foreach( $_GET as $id => $value ) {
@@ -30,6 +31,7 @@
 			}
 		}
 		$p->changeInfo( $firstname, $lastname );
+		$log( "Profile", "$usr changed her/his profile" );
 	}
 	http_response_code( 302 );
 	header( "Location: /profile/me/" );
