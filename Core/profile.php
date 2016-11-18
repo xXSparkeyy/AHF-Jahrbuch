@@ -2,10 +2,10 @@
 	
 	class Profile {
 		
-		public function Profile( $id ) {
+		public function Profile( $id, $load_fields=true ) {
 			$this->id = $id;
 			$this->error = $this->error || !$this->loadBasicInfo();
-			$this->error = $this->error || !$this->loadFields();
+			if( $load_fields ) $this->error = $this->error || !$this->loadFields();
 		}
 		
 		public $error = false;
@@ -78,8 +78,8 @@
 			return $ret;
 		}
 		
-		public static function getProfile( $id ) {
-			return new Profile( $id );
+		public static function getProfile( $id, $load_fields=true ) {
+			return new Profile( $id, $load_fields );
 		}
 		
 		public static function userExists( $id ) {
