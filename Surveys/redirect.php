@@ -17,13 +17,17 @@
 					header( "Location: /Surveys/");
 					return;
 			}
-			$arg = explode( "-", parse_url( $_SERVER['REQUEST_URI'], PHP_URL_QUERY ) );
-			if( count( $arg ) == 2 ) {
-				$vote = $arg[1]=="up"?1:($arg[1]=="down"?-1:0);
-				Survey::vote( $arg[0]*1,$user,$vote );
-				http_response_code( 303 );
-				header( "Location: /Surveys/".$url[2]);
-				return;
+			if( $url[3] == "delete" ) {
+				if( !Login::isAdmin($user) ) {
+					http_response_code( 303 );
+					header( "Location: /Surveys/".$url[2] );
+					return;
+				} else {
+					Survey::deleteSurvey( $url[2] );
+					http_response_code( 303 );
+					header( "Location: /Surveys/" );
+					return;
+				}
 			}
 			if( $url[3] == "edit" ) {
 				if( !Login::isAdmin($user) ) {
