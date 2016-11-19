@@ -48,10 +48,10 @@
 			</div>
 			<div class='col s12'>
 				<ul class='collection with-header'>
-					<li class='collection-header'><h4>Umfragen (<?php $surveys = Survey::getSurveys( $false ); echo count( $surveys ) ?>)</h4></li>
+					<li class='collection-header'><h4>Umfragen (<?php $surveys = Survey::getSurveys( false ); echo count( $surveys ) ?>)</h4></li>
 					<div class='dashboard_info_container'>
 					<?php
-						
+
 						foreach( $surveys as $itm ) {
 							$s = $itm['survey_title'];
 							$a = $itm['survey_description'];
