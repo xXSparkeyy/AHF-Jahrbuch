@@ -2,12 +2,15 @@
 
 class Group {
 
+	private $id;
 	private $name;
 	private $description;
 	private $members;
 	
-	public function Group() {
-		
+	public function Group( $id ) {
+		$this->id = $id;
+		$this->loadMeta();
+		$this->loadMembers();
 	}
 	
 	public static function getGroups() {
@@ -23,7 +26,7 @@ class Group {
 	private function loadMeta() {
 		$db = connectDB();
 		$id = $this->id;
-		if( !($r = $db->query( "SELECT * FROM `group_meta` WHERE `user_id` Like $id" ) ) ) return;
+		if( !($r = $db->query( "SELECT * FROM `group_meta` WHERE `group_id` Like $id" ) ) ) return;
 		if( !($r = $r->fetch_array(MYSQL_ASSOC)) ) return;
 		$this->name = $r["name"];
 		$this->description = $r["description"];
@@ -37,7 +40,7 @@ class Group {
 			catch( Exception $e ) { continue; }
 			$ret[] = $p;
 		}
-		return $ret;
+		$this->members = $ret;
 	}
 	
 	public function getName() {

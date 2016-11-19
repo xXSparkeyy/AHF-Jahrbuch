@@ -1,11 +1,18 @@
 <?php
 	$s = new Survey( SURVEY, Login::checkUser()["user_id"] );
+	$survey_id = $s->getID();
 	if( SURVEYEDIT ) echo '<form method="POST" action="/Surveys/setValues.php" id="editform">';
 ?>
 <div class="container" action="#">
 <div class="row">
 <h1 class="center s12 l8 offset-l2"><?php if( SURVEYEDIT ) echo "<input type='text' name='title' value='".$s->getTitle()."'>"; else echo $s->getTitle(); if( !SURVEYEDIT && Login::isAdmin(Login::checkUser()) ) echo '<a href="edit/" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>'?></h1>
-<h5 class="center s12 l8 offset-l2"><?php if( SURVEYEDIT ) echo "<input type='text' name='desc'  value='".$s->getDescription()."'>"; else echo $s->getDescription(); ?></h5>
+<h5 class="center s12 l8 offset-l2">- <?php if( SURVEYEDIT ) echo "<input type='text' name='desc'  value='".$s->getDescription()."'>"; else echo $s->getDescription(); ?> -</h5>
+<?php
+if( !SURVEYEDIT && Login::isAdmin( Login::checkUser()["user_id"] ) ) {
+		echo '<ul><li><a href="delete/" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">delete</i></a>
+			  <a href="edit/" class="btn-floating btn-large waves-effect waves-light orange"><i class="material-icons">edit</i></a></li></ul>';
+	}
+?>
 <br><br><br><br><br>
 <div class="row" id="questions">
 <?php
@@ -22,7 +29,7 @@
 			</script>";
 		echo '<ul><li><a href="javascript:add()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
 			  <a href="javascript:save()" class="btn-floating btn-large waves-effect waves-light orange"><i class="material-icons">save</i></a>
-			  <a href="/Surveys/'.SURVEY.'/" class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">list</i></a></li></ul>
+			  <a href="/Surveys/'.SURVEY.'/" class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">list</i></a><a href="../delete/" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">delete</i></a></li></ul>
 		<input type="hidden" value="'.SURVEY.'" name="survey_id"><input id="muckefuck" type="checkbox" name="visib" '.($s->isPublic()?"checked":"").'><label style="margin-right: 1%" for="muckefuck">Öffentlich</label><div id="questions">';
 	}
 	foreach( ($s->getQuestions()) as $question ) {
