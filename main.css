@@ -1,0 +1,35 @@
+.float_l{
+  float: left;
+}
+.search_icon{
+  font-size: 3em;
+  float: left;
+}
+.search_bar{
+  width: calc(100% - 3.5em) !important;
+  padding-left: 0.5em !important;
+  font-size: 1.5em;
+}
+.brand-logo{
+  padding-left: 0.5em !important;
+}
+.row_profil{
+  width: 80% !important;
+  margin: 2em auto 2em auto !important;
+}
+.row_profil div p{
+  margin: 0 !important;
+  text-align: left center;
+}
+.chip{
+  line-height: 25px;
+  height: 1.8em;
+}
+li a{
+  color: black;
+}
+.dashboard_info_container{
+  height: 300px;
+  overflow-y: scroll;
+
+}
