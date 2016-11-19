@@ -23,7 +23,7 @@
 							$v = explode( "|", $field["field_opt"] );
 							$s = []; foreach( $value as $i ) {
 								$s[] = $v[$i];
-							} 
+							}
 							$p->changeField( $id, implode("|", $s) );
 						break;
 					}
@@ -31,7 +31,7 @@
 			}
 		}
 		$p->changeInfo( $firstname, $lastname );
-		$log( "Profile", "$usr changed her/his profile" );
+		Log::msg( "Profile", "$usr changed her/his profile" );
 	}
 	http_response_code( 302 );
 	header( "Location: /profile/me/" );

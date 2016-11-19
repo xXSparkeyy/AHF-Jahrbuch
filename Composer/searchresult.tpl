@@ -2,7 +2,12 @@
 <div class="container" action="#">
 	<form action="/search" class="row">
 		<div class="input-field">
-		  <i class="material-icons">search</i><span><input id="search" type="search" name="q" value="<?php echo QUERY;?>" required></span>
+
+		  		<i class="material-icons float_l search_icon">search</i>
+					<span>
+						<input id="search" class="search_bar" type="search" name="q" value="<?php echo QUERY;?>" required>
+					</span>
+
 		</div>
  	</form>
  	<h1>Profile</h1>
@@ -24,4 +29,3 @@
 		}
 	?>
 </div>
-

@@ -20,9 +20,9 @@
      		$title = $field["field_title"];
      		$value = $field["value"];
      		echo'
-			 	<div class="row">
+			 	<div class="row row_profil">
 					<div class="col s6">
-						<p class="right green-text text-darken-2">'.$title.'</p>
+						<p class="left">'.$title.'</p>
 					</div>
 				<div class="col s6">';
 		if( PROFILEEDIT ) {
@@ -41,11 +41,11 @@
 				case  4: echo '<p class="left">'.$value.'</p>'; break;
 				default: break;
 			}
-			
+
      	}
      	echo '</div></div>';
      	}
      	if( PROFILEEDIT ) echo '<br><br><div class="row"><input type="submit" value="Speichern" id="loginbutton" class="waves-effect waves-light btn green col s12 m4 offset-m4"></input></div></form><br><br>';
-     
+
      ?>
 </div>
