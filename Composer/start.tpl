@@ -26,6 +26,27 @@
 
 			  </ul>
 			</div>
+			<div class='col s6'>
+				<ul class='collection with-header'>
+					<li class='collection-header'><h4>Log's</h4></li>
+
+					<?php
+						$res = Log::getMessages( );
+						foreach( $res as $itm ) {
+							$s = $itm['name'];
+							$a = $itm['content'];
+							echo "
+							<li class='collection-item'>
+								<span class='title'>Betroffen: $s</span>
+								<p>$a
+								</p>
+							</li>
+							";
+						}
+						?>
+
+				</ul>
+			</div>
 		<?php }else{ ?>
 		<h1 class='center s12 l8 offset-l2'>Jahrbuch seite des MH27 Abschluss Jahres</h1>
 		<h5 class='center s12 l8 offset-l2'>Logge dich ein oder registriere dich ( 4 free ) um den vollen inhalt zu genießen.<br>Das desing is ( schlampig ) mit http://materializecss.com/navbar.html gemacht, so schlampig das hier ne verlinkung fehlt.</h5>
