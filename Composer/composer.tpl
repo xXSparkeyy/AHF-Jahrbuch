@@ -16,5 +16,5 @@
 		<script>
 			$(".button-collapse").sideNav();
 		</script>
-</body>
+	</body>
 </html>

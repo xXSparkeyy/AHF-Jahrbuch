@@ -1,7 +1,6 @@
 <?php require_once( "db.php" );
 
-
-public class Group {
+class Group {
 
 	private $name;
 	private $description;
@@ -9,6 +8,36 @@ public class Group {
 	
 	public function Group() {
 		
+	}
+	
+	public static function getGroups() {
+		if(!($db = connectDB()) ) return false;
+		if(!($result = $db->query( "SELECT * FROM `group_meta`") ) ) return false;
+		$ret = []; while(($e = $result->fetch_array(MYSQL_ASSOC))) { $ret[] = $e; }
+		return $ret;
+	}
+	public static function getGroup( $id ) {
+		return new Group( $id );
+	}
+	
+	private function loadMeta() {
+		$db = connectDB();
+		$id = $this->id;
+		if( !($r = $db->query( "SELECT * FROM `group_meta` WHERE `user_id` Like $id" ) ) ) return;
+		if( !($r = $r->fetch_array(MYSQL_ASSOC)) ) return;
+		$this->name = $r["name"];
+		$this->description = $r["description"];
+	}
+	private function loadMembers() {
+		if(!($db = connectDB()) ) return false;
+		$id = $this->id;
+		if(!($result = $db->query( "SELECT `user_id` FROM `group_participants` WHERE `group_id` Like $id") ) ) return false;
+		$ret = []; while(($e = $result->fetch_array(MYSQL_ASSOC))) {
+			try { $p = new Profile( $e["user_id"], false ); }
+			catch( Exception $e ) { continue; }
+			$ret[] = $p;
+		}
+		return $ret;
 	}
 	
 	public function getName() {
@@ -29,33 +58,14 @@ public class Group {
 	public function addMember( $id ) {
 		$db = connectDB();
 		$id = $this->id;
-		if( ($db->query( "SELECT 1 FROM `group_participants` WHERE `user_id` Like $id" ))->num_rows > 0 ) return;
+		if( !($r = $db->query( "SELECT 1 FROM `group_participants` WHERE `user_id` Like $id" ) ) ) return;
+		if( $r->num_rows > 0 ) return;
 		$db->query( "UPDATE `group_meta` SET `name`='$name', `description`='$dsc' WHERE `group_id` Like $id" );
 	}
 	public function removeMember( $id ) {
 		$db = connectDB();
 		$id = $this->id; $db->query( "DELETE FROM `group_participants` WHERE `user_id` Like $id" );
 		loadMembers();
-	}
-	
-	
-	private function loadMeta() {
-		$db = connectDB();
-		$id = $this->id;
-		if( !($r = ($db->query( "SELECT * FROM `group_participants` WHERE `user_id` Like $id",  ))->fetch_array(MYSQL_ASSOC))) return;
-		$this->name = $r["name"];
-		$this->description = $r["description"];
-	}
-	private function loadMembers() {
-		if(!($db = connectDB()) ) return false;
-		$id = $this->id;
-		if(!($result = $db->query( "SELECT `user_id` FROM `group_participants` WHERE `group_id` Like $id") ) ) return false;
-		$ret = []; while(($e = $result->fetch_array(MYSQL_ASSOC))) {
-			try { $p = new Profile( $e["user_id"], false ); }
-			catch( e ) { continue; }
-			$ret[] = $p;
-		}
-		return $ret;
 	}
 	
 	
