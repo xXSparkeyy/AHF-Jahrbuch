@@ -45,17 +45,6 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 		return $ret;
 	}
 	//#######
-//#
-//#	    Return the total Number of Surveys
-//#
-//#######
-	public static function countSurveys(){
-		if(!($db = connectDB()) ) return false;
-		if(!($result = $db->query("SELECT * FROM `survey_meta`") ) ) return false;
-		if( $result->num_rows == 0 )  return false;
-		return $result->num_rows;
-	}
-	//#######
 	//#
 	//#	    Returns single survey by id, same as new Survey([id])
 	//#
