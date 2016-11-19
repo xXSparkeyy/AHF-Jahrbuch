@@ -4,23 +4,20 @@
 		<?php if (Login::isAdmin(Login::checkUser()['user_id'])){ ?>
 			<div class='col s6'>
 				<ul class='collection with-header'>
-					<li class='collection-header'><h4>Benutzer (<?php echo Profile::countProfiles(); ?>)</h4></li>
+					<li class='collection-header'><h4>Benutzer (<?php $profiles = Profile::listProfiles( ); echo count( $profiles ) ?>)</h4></li>
 						<div class='dashboard_info_container'>
 			    <?php
-						$res = Profile::listProfiles( );
-						foreach( $res as $itm ) {
+						foreach( $profiles as $itm ) {
 							$s = $itm['FName'];
 							$a = $itm['LName'];
 							$z = $itm['user_id'];
 							echo "
-							<li class='collection-item avatar '>
-								<a href='/profile/$z'>
+							<a href='/profile/$z'><li class='collection-item avatar '>
 								<img src='images/yuna.jpg' alt='' class='circle'>
 								<span class='title'>$s</span>
 								<p>$a<br>
 								</p>
-								</a>
-							</li>
+							</li></a>
 							";
 						}
 						?>
@@ -51,23 +48,21 @@
 			</div>
 			<div class='col s12'>
 				<ul class='collection with-header'>
-					<li class='collection-header'><h4>Umfragen (<?php echo Survey::countSurveys(); ?>)</h4></li>
+					<li class='collection-header'><h4>Umfragen (<?php $surveys = Survey::getSurveys( $false ); echo count( $surveys ) ?>)</h4></li>
 					<div class='dashboard_info_container'>
 					<?php
-						$res = Survey::getSurveys( $hideInvisible=false );
-						foreach( $res as $itm ) {
+						
+						foreach( $surveys as $itm ) {
 							$s = $itm['survey_title'];
 							$a = $itm['survey_description'];
 							$link = $itm['survey_meta_id'];
 							echo "
 
-							<li class='collection-item'>
-									<a href='/Surveys/$link'>
-										<span class='title'>$s</span>
-										<p>$a
-										</p>
-									</a>
-							</li>
+							<a href='/Surveys/$link'><li class='collection-item'>
+								<span class='title'>$s</span>
+								<p>$a
+								</p>
+							</li></a>
 
 							";
 						}

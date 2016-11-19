@@ -1,37 +1,32 @@
 <?php require_once $_SERVER["DOCUMENT_ROOT"]."/Core/index.php";
-	if( count( $_GET ) > 0 ) {
+	if( count( $_POST ) > 0 ) {
 		$usr = Login::checkUser()["user_id"];
-		$p = new Profile( $usr );
-		$firstname= "";
-		$lastname = "";
-		foreach( $_GET as $id => $value ) {
-			if( $id == "firstname" ) { $firstname=$value; continue; }
-			if( $id == "lastname"  ) { $lastname =$value; continue; }
-			foreach( $p->getFields() as $field ) {
-				if( $field["field_id"] == $id ) {
-					switch( $field["field_type"] ) {
-						case 1:
-							$p->changeField( $id, $value );
-						break;
-						case 4:
-							$p->changeField( $id, $value );
-						break;
-						case "2":
-							$p->changeField( $id, explode( "|", $field["field_opt"] )[$value] );
-						break;
-						case "3":
-							$v = explode( "|", $field["field_opt"] );
-							$s = []; foreach( $value as $i ) {
-								$s[] = $v[$i];
-							} 
-							$p->changeField( $id, implode("|", $s) );
-						break;
-					}
-				}
+		$g = $_POST["group"]?$_POST["group"]:false;
+		if( Group::isMod($g, $usr) ) {
+			if( isset($_POST["newgroup"]) ) {
+				$g = (Group::addGroup( $_POST["name"], $_POST["desc"] ))->getID();
+				http_response_code( 302 );
+				header( "Location: /group/$g/" );
+				return;
+			}
+			if( !$g ) break;
+			if( isset($_POST["name"]) && isset($_POST["desc"]) ) {
+				$gr = new Group( $g );
+				$gr->setMeta( $_POST["name"], $_POST["desc"] );
+				$log( "GROUP", "$usr changed Group($g) to ".$gr->getName() );
+				http_response_code( 302 );
+				header( "Location: /group/$g/" );
+				return;
+			}
+			if( isset($_POST["addmember"]) ) {
+				$gr = new Group( $g ); $u = $_POST["addmember"];
+				$gr->addMember( $u );
+				$log( "GROUP", "$usr added $u to Group($g)".$gr->getName() );
+				http_response_code( 302 );
+				header( "Location: /group/$g/" );
+				return;
 			}
 		}
-		$p->changeInfo( $firstname, $lastname );
-		$log( "Profile", "$usr changed her/his profile" );
 	}
 	http_response_code( 302 );
 	header( "Location: /profile/me/" );
