@@ -1,7 +1,7 @@
 <?php ?>
 <nav>
 	<div class="nav-wrapper light-green">
-		<a href="/index.php/" class="brand-logo"><?php echo Login::isAdmin(Login::checkUser()["user_id"])?"Dashboard":"Jahrbuch"; ?></a>
+		<a href="/index.php/" class="brand-logo"><?php echo Login::isAdmin(Login::checkUser()["user_id"])?"Dashboard<i class='material-icons'>dashboard</i>":"Jahrbuch"; ?></a>
 		<a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
 		<ul class="right hide-on-med-and-down">
 			<?php if(Login::checkUser()){?>
