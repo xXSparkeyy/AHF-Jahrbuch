@@ -4,23 +4,16 @@
 		<?php if (Login::isAdmin(Login::checkUser()['user_id'])){ ?>
 			<div class='col s6'>
 				<ul class='collection with-header'>
-					<li class='collection-header'><h4>Benutzer (<?php echo Profile::countProfiles(); ?>)</h4></li>
+					<li class='collection-header'><h4>Benutzer (<?php $profiles = Profile::listProfiles( ); echo count( $profiles ) ?>)</h4></li>
 						<div class='dashboard_info_container'>
 			    <?php
-						$res = Profile::listProfiles( );
-						foreach( $res as $itm ) {
-							$s = $itm['FName'];
-							$a = $itm['LName'];
-							$z = $itm['user_id'];
+						foreach( $profiles as $itm ) {
+							$name = $itm['FName']." ".$itm['LName'];
+							$id = $itm['user_id'];
 							echo "
-							<li class='collection-item avatar '>
-								<a href='/profile/$z'>
-								<img src='images/yuna.jpg' alt='' class='circle'>
-								<span class='title'>$s</span>
-								<p>$a<br>
-								</p>
-								</a>
-							</li>
+							<a href='/profile/$id/'><li class='collection-item '>
+								<h5><i class='material-icons left'>account_circle</i><span class='title'>$name</span></h5>
+							</li></a>
 							";
 						}
 						?>
@@ -51,24 +44,43 @@
 			</div>
 			<div class='col s12'>
 				<ul class='collection with-header'>
-					<li class='collection-header'><h4>Umfragen (<?php echo Survey::countSurveys(); ?>)</h4></li>
+					<li class='collection-header'><h4>Umfragen (<?php $surveys = Survey::getSurveys( false ); echo count( $surveys ) ?>)</h4></li>
 					<div class='dashboard_info_container'>
 					<?php
-						$res = Survey::getSurveys( $hideInvisible=false );
-						foreach( $res as $itm ) {
-							$s = $itm['survey_title'];
-							$a = $itm['survey_description'];
-							$link = $itm['survey_meta_id'];
+						
+						foreach( $surveys as $itm ) {
+							$title = $itm['survey_title'];
+							$desc = $itm['survey_description'];
+							$id = $itm['survey_meta_id'];
 							echo "
 
-							<li class='collection-item'>
-									<a href='/Surveys/$link'>
-										<span class='title'>$s</span>
-										<p>$a
-										</p>
-									</a>
-							</li>
+							<a href='/Surveys/$id/'><li class='collection-item'>
+								<b class='title'>$title</b>
+								<p>$desc</p>
+							</li></a>
 
+							";
+						}
+						?>
+					</div>
+
+				</ul>
+			</div>
+			<div class='col s12'>
+				<ul class='collection with-header'>
+					<li class='collection-header'><h4>Gruppen (<?php $groups = Group::getGroups(); echo count( $groups ) ?>)</h4></li>
+					<div class='dashboard_info_container'>
+					<?php
+						
+						foreach( $groups as $itm ) {
+							$name = $itm['name'];
+							$desc = $itm['description'];
+							$id = $itm['group_id'];
+							echo "
+							<a href='/group/$id/'><li class='collection-item'>
+								<b class='title'>$name</b>
+								<p>$desc</p>
+							</li></a>
 							";
 						}
 						?>

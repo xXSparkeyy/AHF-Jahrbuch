@@ -89,13 +89,6 @@
 			return true;
 		}
 
-		public static function countProfiles(){
-			if(!($db = connectDB()) ) return false;
-			if(!($result = $db->query("SELECT * FROM `profiles`") ) ) return false;
-			if( $result->num_rows == 0 )  return false;
-			return $result->num_rows;
-		}
-
 	}
 
 ?>

@@ -22,7 +22,7 @@
      		echo'
 			 	<div class="row row_profil">
 					<div class="col s6">
-						<p class="left">'.$title.'</p>
+						<p class="right green-text">'.$title.'</p>
 					</div>
 				<div class="col s6">';
 		if( PROFILEEDIT ) {
@@ -45,7 +45,12 @@
      	}
      	echo '</div></div>';
      	}
-     	if( PROFILEEDIT ) echo '<br><br><div class="row"><input type="submit" value="Speichern" id="loginbutton" class="waves-effect waves-light btn green col s12 m4 offset-m4"></input></div></form><br><br>';
+     	if( PROFILEEDIT ) echo '<br><br>
+     	<div class="row" onclick="document.forms[0].submit()">
+     		<input type="submit" value="Speichern" id="loginbutton" class="waves-effect waves-light btn green col s12 m4 offset-m4">
+     	</div>
+     	</form>
+     	<br><br>';
 
      ?>
 </div>
