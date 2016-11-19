@@ -6,7 +6,7 @@
 <div class="container" action="#">
 <div class="row">
 <h1 class="center s12 l8 offset-l2"><?php if( SURVEYEDIT ) echo "<input type='text' name='title' value='".$s->getTitle()."'>"; else echo $s->getTitle(); if( !SURVEYEDIT && Login::isAdmin(Login::checkUser()) ) echo '<a href="edit/" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>'?></h1>
-<h5 class="center s12 l8 offset-l2"><?php if( SURVEYEDIT ) echo "<input type='text' name='desc'  value='".$s->getDescription()."'>"; else echo $s->getDescription(); ?></h5>
+<h5 class="center s12 l8 offset-l2">- <?php if( SURVEYEDIT ) echo "<input type='text' name='desc'  value='".$s->getDescription()."'>"; else echo $s->getDescription(); ?> -</h5>
 <?php
 if( !SURVEYEDIT && Login::isAdmin( Login::checkUser()["user_id"] ) ) {
 		echo '<ul><li><a href="delete/" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">delete</i></a>

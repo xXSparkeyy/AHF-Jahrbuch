@@ -11,7 +11,6 @@
 		public $error = false;
 
 		protected $id = "";
-		protected $uid = "";
 		protected $first_name = "No";
 		protected $last_name  = "Name";
 		protected $fields = [];
