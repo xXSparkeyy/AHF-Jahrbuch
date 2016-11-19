@@ -4,46 +4,75 @@
 		<?php if (Login::isAdmin(Login::checkUser()['user_id'])){ ?>
 			<div class='col s6'>
 				<ul class='collection with-header'>
-					<li class='collection-header'><h4>Benutzer</h4></li>
-
+					<li class='collection-header'><h4>Benutzer (<?php echo Profile::countProfiles(); ?>)</h4></li>
+						<div class='dashboard_info_container'>
 			    <?php
-						$res = Search::forUsers( '' );
+						$res = Profile::listProfiles( );
 						foreach( $res as $itm ) {
-							$s = $itm['title'];
-							$a = $itm['link'];
+							$s = $itm['FName'];
+							$a = $itm['LName'];
+							$z = $itm['user_id'];
 							echo "
 							<li class='collection-item avatar '>
-								<a href='/profil/$a'>
+								<a href='/profile/$z'>
 								<img src='images/yuna.jpg' alt='' class='circle'>
 								<span class='title'>$s</span>
-								<p>First Line <br>
+								<p>$a<br>
 								</p>
 								</a>
 							</li>
 							";
 						}
 						?>
-
+						</div>
 			  </ul>
 			</div>
 			<div class='col s6'>
 				<ul class='collection with-header'>
 					<li class='collection-header'><h4>Log's</h4></li>
-
+					<div class='dashboard_info_container'>
 					<?php
 						$res = Log::getMessages( );
 						foreach( $res as $itm ) {
-							$s = $itm['name'];
-							$a = $itm['content'];
+							$s = $itm['content'];
+							$a = $itm['date'];
 							echo "
 							<li class='collection-item'>
-								<span class='title'>Betroffen: $s</span>
+								<span class='title'>$s</span>
 								<p>$a
 								</p>
 							</li>
 							";
 						}
 						?>
+					</div>
+
+				</ul>
+			</div>
+			<div class='col s12'>
+				<ul class='collection with-header'>
+					<li class='collection-header'><h4>Umfragen (<?php echo Survey::countSurveys(); ?>)</h4></li>
+					<div class='dashboard_info_container'>
+					<?php
+						$res = Survey::getSurveys( $hideInvisible=false );
+						foreach( $res as $itm ) {
+							$s = $itm['survey_title'];
+							$a = $itm['survey_description'];
+							$link = $itm['survey_meta_id'];
+							echo "
+
+							<li class='collection-item'>
+									<a href='/Surveys/$link'>
+										<span class='title'>$s</span>
+										<p>$a
+										</p>
+									</a>
+							</li>
+
+							";
+						}
+						?>
+					</div>
 
 				</ul>
 			</div>

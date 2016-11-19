@@ -12,7 +12,7 @@ class Log{
 	}
 	public static function getMessages( ) {
 		if(!($db = connectDB()) ) return false;
-		if(!($result = $db->query( "SELECT * FROM `Log` " ) ) ) return false;
+		if(!($result = $db->query( "SELECT * FROM `Log` ORDER BY DATE DESC" ) ) ) return false;
 		$ret = []; while(($e = $result->fetch_array(MYSQL_ASSOC))) { $ret[] = $e; }
 		return $ret;
 	}

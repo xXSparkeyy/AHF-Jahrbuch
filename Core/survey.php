@@ -5,21 +5,21 @@ define( "SURVEY_NOT_FOUND", 1 );
 define( "SURVEY_NOT_VISIBLE", 2 );
 
 	class Survey {
-		
+
 	//#######
 	//#
 	//#	    Holds the error code
 	//#
 	//#######
 	private $error;
-	
+
 	//#######
 	//#
 	//#	    Returns the error code
 	//#
 	//#######
 	public function getError() { return $this->error; }
-	
+
 	//#######
 	//#
 	//#	    Returns the error message
@@ -32,7 +32,7 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 			case SURVEY_MYSQL_ERROR          : return "Es gibt ein Problem mit der Datenbank";
 		}
 	}
-		
+
     //#######
 	//#
 	//#	    Returns list of all avaiable survey, optional also hidden ones
@@ -45,8 +45,19 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 		return $ret;
 	}
 	//#######
+//#
+//#	    Return the total Number of Surveys
+//#
+//#######
+	public static function countSurveys(){
+		if(!($db = connectDB()) ) return false;
+		if(!($result = $db->query("SELECT * FROM `survey_meta`") ) ) return false;
+		if( $result->num_rows == 0 )  return false;
+		return $result->num_rows;
+	}
+	//#######
 	//#
-	//#	    Returns single survey by id, same as new Survey([id]) 
+	//#	    Returns single survey by id, same as new Survey([id])
 	//#
 	//#######
 	public static function getSurvey( $id, $u = false ) {
@@ -62,13 +73,13 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 	protected $description = "";
 	protected $visible = false;
 	protected $questions = [];
-	
+
 	public function getID() { return $this->id; }
 	public function getTitle() { return $this->title; }
 	public function getDescription() { return $this->description; }
 	public function isPublic() { return $this->visible; }
 	public function getQuestions() { return $this->questions; }
-	
+
 	//#######
 	//#
 	//#	    Sets title and description of the survey
@@ -102,7 +113,7 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 	//#
 	//#######
 	protected function loadQuestions( $user_id = false ) {
-		$id = $this->id; 
+		$id = $this->id;
 		if( $user_id ) $q = "SELECT `question_id`, `question_title`,  COALESCE( `votes`, 0 ) as `votes`, `myvote` FROM `survey_questions` LEFT JOIN ( SELECT *, SUM( `vote_value` ) as votes FROM `survey_votes` LEFT JOIN ( SELECT `vote_value` As myvote, `vote_user` as user, `vote_question` as id FROM `survey_votes` WHERE `vote_user` Like '$user_id' ) as OwnVotes ON `vote_question` Like id GROUP BY `vote_question`) as votes ON `vote_question` LIKE `question_id` WHERE `survey_id` Like $id ORDER BY `votes` DESC";
 		else $q = "SELECT `question_id`, `question_title`, SUM(`vote_value`) As votes FROM `survey_votes`, `survey_questions` WHERE `survey_id` Like $id AND `vote_question` Like `question_id` GROUP BY `vote_question` ORDER BY `votes` DESC";
 		if(!($db = connectDB()) ) {error_log($db->error); return SURVEY_MYSQL_ERROR;}
@@ -179,8 +190,8 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 		else                       { if(!($result = $db->query( "UPDATE `survey_votes` SET `vote_value`=$vote WHERE `vote_user` LIKE '$user_id' AND `vote_question` Like '$question_id'") ) ) {return false;} }
 		return true;
 	}
-	
+
 }
-	
+
 
 ?>

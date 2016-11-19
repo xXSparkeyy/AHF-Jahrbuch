@@ -1,21 +1,21 @@
 <?php require_once( "db.php" );
-	
+
 	class Profile {
-		
+
 		public function Profile( $id, $load_fields=true ) {
 			$this->id = $id;
 			$this->error = $this->error || !$this->loadBasicInfo();
 			if( $load_fields ) $this->error = $this->error || !$this->loadFields();
 		}
-		
+
 		public $error = false;
-		
+
 		protected $id = "";
 		protected $uid = "";
 		protected $first_name = "No";
 		protected $last_name  = "Name";
 		protected $fields = [];
-		
+
 		public function getID() {
 			return $this->id;
 		}
@@ -25,11 +25,11 @@
 		public function getLastName() {
 			return $this->last_name;
 		}
-		
+
 		public function getFields() {
 			return $this->fields;
 		}
-		
+
 		protected function loadBasicInfo( ) {
 			if(!($db = connectDB()) ) return false;
 			$id = $this->id; if(!($result = $db->query("SELECT `FName`, `LName` FROM `profiles` WHERE `user_id` Like '$id'") ) ) return false;
@@ -39,7 +39,7 @@
 			$this->last_name = $ret["LName"];
 			return true;
 		}
-		
+
 		protected function loadFields() {
 			if(!($db = connectDB()) ) return false;
 			$id = $this->id;if(!($result = $db->query("SELECT `field_id`, `field_title`, `value`, `field_type`, `field_opt` FROM `profile_meta_fields` LEFT JOIN `profile_user_fields` ON `field_id` Like `meta_field_id` WHERE `user_id` IS NULL OR `user_id` Like '$id' ORDER BY `field_order`") ) ) return false;
@@ -48,7 +48,7 @@
 			$this->fields = $ret;
 			return true;
 		}
-		
+
 		public function changeInfo( $fname, $lname ) {
 			if(!($db = connectDB()) ) return false;
 			$usr_id = $this->id;
@@ -59,7 +59,7 @@
 			$this->loadBasicInfo();
 			return true;
 		}
-		
+
 		public function changeField( $field_id, $value ) {
 			if(!($db = connectDB()) ) return false;
 			$usr_id = $this->id;
@@ -70,25 +70,32 @@
 			$this->loadFields();
 			return true;
 		}
-		
+
 		public static function listProfiles() {
 			if(!($db = connectDB()) ) return false;
 			if(!($result = $db->query( "SELECT * FROM `profiles`") ) ) return false;
 			$ret = []; while(($e = $result->fetch_array(MYSQL_ASSOC))) { $ret[] = $e; }
 			return $ret;
 		}
-		
+
 		public static function getProfile( $id, $load_fields=true ) {
 			return new Profile( $id, $load_fields );
 		}
-		
+
 		public static function userExists( $id ) {
 			if(!($db = connectDB()) ) return false;
 			if(!($result = $db->query("SELECT * FROM `login_info` WHERE `id` Like '$id'") ) ) return false;
 			if( $result->num_rows == 0 )  return false;
 			return true;
 		}
-		
+
+		public static function countProfiles(){
+			if(!($db = connectDB()) ) return false;
+			if(!($result = $db->query("SELECT * FROM `profiles`") ) ) return false;
+			if( $result->num_rows == 0 )  return false;
+			return $result->num_rows;
+		}
+
 	}
-	
+
 ?>
