@@ -29,7 +29,7 @@ if( !SURVEYEDIT && Login::isAdmin( Login::checkUser()["user_id"] ) ) {
 			</script>";
 		echo '<ul><li><a href="javascript:add()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
 			  <a href="javascript:save()" class="btn-floating btn-large waves-effect waves-light orange"><i class="material-icons">save</i></a>
-			  <a href="/Surveys/'.SURVEY.'/" class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">list</i></a></li></ul>
+			  <a href="/Surveys/'.SURVEY.'/" class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">list</i></a><a href="../delete/" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">delete</i></a></li></ul>
 		<input type="hidden" value="'.SURVEY.'" name="survey_id"><input id="muckefuck" type="checkbox" name="visib" '.($s->isPublic()?"checked":"").'><label style="margin-right: 1%" for="muckefuck">Öffentlich</label><div id="questions">';
 	}
 	foreach( ($s->getQuestions()) as $question ) {

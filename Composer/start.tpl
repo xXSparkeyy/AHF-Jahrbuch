@@ -27,12 +27,12 @@
 					<?php
 						$res = Log::getMessages( );
 						foreach( $res as $itm ) {
-							$s = $itm['content'];
-							$a = $itm['date'];
+							$name = $itm['name'];
+							$content = $itm['content'];
+							$date = $itm['date'];
 							echo "
 							<li class='collection-item'>
-								<span class='title'>$s</span>
-								<p>$a
+								<span class='title grey-text'>[$name]</span> <span>$content</span> <span class='light-green-text'>($date)</span>
 								</p>
 							</li>
 							";

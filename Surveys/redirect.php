@@ -24,6 +24,7 @@
 					return;
 				} else {
 					Survey::deleteSurvey( $url[2] );
+					Log::msg( "Survey", "$user deleted Survey ".$url[2] );
 					http_response_code( 303 );
 					header( "Location: /Surveys/" );
 					return;
