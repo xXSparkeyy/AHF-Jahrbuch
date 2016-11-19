@@ -1,13 +1,16 @@
 <?php require_once $_SERVER["DOCUMENT_ROOT"]."/Core/index.php";
+	$usr = Login::checkUser()["user_id"];
 	if( $_POST["addSurvey"] ) {
 		$s = Survey::createSurvey( "New Survey", "Looks like some pretty nice space, why not insert a description here?" );
 		http_response_code( 302 );
 		header( "Location: /Surveys/".$s->getID()."/edit/" );
+		Log::msg( "Survey", "$usr added a Survey" );
 		return;
 	}
 	if( count( $_POST ) > 0 ) {
-		$admin = Login::isAdmin(Login::checkUser()["user_id"] );
-		$survey = new Survey( $_POST["survey_id"] );
+		$admin = Login::isAdmin($usr );
+		$sid = $_POST["survey_id"];
+		$survey = new Survey( $sid );
 		$title= "";
 		$desc = "";
 		$visib= false;
@@ -30,6 +33,7 @@
 			$survey->editQuestion($id,$value);
 		}
 		$survey->setMeta( $title, $desc, $visib );
+		Log::msg( "Survey", "$usr edited Survey $sid" );
 	}
 	http_response_code( 302 );
 	header( "Location: /Surveys/".$_POST["survey_id"]."/edit/" );

@@ -22,7 +22,7 @@
      		echo'
 			 	<div class="row">
 					<div class="col s6">
-						<p class="right">'.$title.'</p>
+						<p class="right green-text text-darken-2">'.$title.'</p>
 					</div>
 				<div class="col s6">';
 		if( PROFILEEDIT ) {
