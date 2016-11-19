@@ -159,10 +159,10 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 	}
 	//#######
 	//#
-	//#	    Creates and returns a new Survey
+	//#	    Deletes a Survey
 	//#
 	//#######
-	public static function createSurvey( $id ) {
+	public static function deleteSurvey( $id ) {
 		if(!($db = connectDB()) ) return false;
 		if(!($db->query("DELETE FROM `survey_meta`      WHERE `survey_meta_id` Like $id") ) ) return false;
 		if(!($db->query("DELETE FROM `survey_questions`, `survey_votes` WHERE `survey_id` Like $id AND `vote_question` Like `question_id`") ) ) return false;
@@ -170,7 +170,7 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 	}
 	//#######
 	//#
-	//#	    Deletes a Survey
+	//#	    Creates and returns a new Survey
 	//#
 	//#######
 	public static function createSurvey( $title, $description ) {
