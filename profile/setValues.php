@@ -31,7 +31,8 @@
 			}
 		}
 		$p->changeInfo( $firstname, $lastname );
-		Log::msg( "Profile", "$usr changed her/his profile" );
+		$g = rand(0,2)>1?"her/his":"his/her";
+		Log::msg( "Profile", "$usr changed $g profile" );
 	}
 	http_response_code( 302 );
 	header( "Location: /profile/me/" );

@@ -22,8 +22,8 @@
 			
 		
 				http_response_code( 200 );
-				define( "CMSLOADSUBTPL", "profile.tpl" );
-				define( "GROUPUSR", $url[2] );
+				define( "CMSLOADSUBTPL", "group.tpl" );
+				define( "GROUP", $url[2] );
 				require_once $_SERVER["DOCUMENT_ROOT"]."/Composer/composer.tpl";
 			
 		}
