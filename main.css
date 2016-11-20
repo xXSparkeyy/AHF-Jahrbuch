@@ -32,3 +32,13 @@ a{
   overflow-y: scroll;
 
 }
+.tabs .tab a{
+  color: #8BC34A !important;
+  font-weight: bold;
+}
+.tabs .indicator{
+  background-color: #8BC34A !important;
+}
+div #surveys , #groups{
+  padding: 0;
+}
