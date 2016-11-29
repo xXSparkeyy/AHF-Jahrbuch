@@ -1,7 +1,6 @@
 <?php require_once( "db.php" );
 
 
-
 define( "LOGIN_HASH_VALIDATION_OK",    0 );
 define( "LOGIN_HASH_VALIDATION_ERROR", 1 );
 define( "LOGIN_TOKEN_OK",              2 );
@@ -96,7 +95,7 @@ class Login {
 	function refreshToken( $token ) {
 		if( !($db = connectDB() ) ) return False;
 		if(!($result = $db->query( "SELECT `user_id`, `token` FROM `login_tokens` WHERE `token` Like '$token'" ) ) ) return False;
-		if(!($t = $this->createToken( $result->fetch_array(MYSQL_ASSOC)["user_id"] ))) return False;
+		if(!($t = $this->createToken( $result->fetch_array(MYSQLI_ASSOC)["user_id"] ))) return False;
 		if(!$this->deleteToken( $token )) return False;
 		setCookie( "login", $t["value"], time()+365*24*60*60, "/" );
 		return $t["value"];
@@ -178,7 +177,7 @@ class Login {
 	//#
 	//#######
 	public static function isAdmin( $user ) {
-		if(!($db = connectDB()) ) {$this->error=LOGIN_MYSQL_ERROR;return false;}
+		if(!($db = connectDB()) ) return false;
 		if(!($result = $db->query( "SELECT * FROM `login_admin` WHERE `login_admin_id` Like '$user' ") ) ) return false;
 		return $result->num_rows > 0;
 	}
@@ -189,7 +188,7 @@ class Login {
 	//#######
 	public static function grantAdmin( $user, $usr ) {
 		if( Login::isAdmin( $user ) ) {
-			if(!($db = connectDB()) ) {$this->error=LOGIN_MYSQL_ERROR;return false;}
+			if(!($db = connectDB()) ) return false;
 			if(!($result = $db->query( "INSERT INTO `login_admin` ( `login_admin_id` ) VALUES ( '$usr' )") ) ) return false;
 			$log( "Profile", "$usr granted $user admin rights" );
 			return $result->num_rows > 0;
@@ -202,7 +201,7 @@ class Login {
 	//#######
 	public static function revokeAdmin( $user, $usr) {
 		if( Login::isAdmin( $user ) ) {
-			if(!($db = connectDB()) ) {$this->error=LOGIN_MYSQL_ERROR;return false;}
+			if(!($db = connectDB()) ) return false;
 			if(!($result = $db->query( "DELETE FROM `login_admin` WHERE `login_admin_id` LIKE '$usr' )") ) ) return false;
 			$log( "Profile", "$usr revoked $user admin rights" );
 			return $result->num_rows > 0;
