@@ -178,7 +178,7 @@ class Login {
 	//#
 	//#######
 	public static function isAdmin( $user ) {
-		if(!($db = connectDB()) ) {$this->error=LOGIN_MYSQL_ERROR;return false;}
+		if(!($db = connectDB()) ) return false;
 		if(!($result = $db->query( "SELECT * FROM `login_admin` WHERE `login_admin_id` Like '$user' ") ) ) return false;
 		return $result->num_rows > 0;
 	}
@@ -189,7 +189,7 @@ class Login {
 	//#######
 	public static function grantAdmin( $user, $usr ) {
 		if( Login::isAdmin( $user ) ) {
-			if(!($db = connectDB()) ) {$this->error=LOGIN_MYSQL_ERROR;return false;}
+			if(!($db = connectDB()) ) return false;
 			if(!($result = $db->query( "INSERT INTO `login_admin` ( `login_admin_id` ) VALUES ( '$usr' )") ) ) return false;
 			$log( "Profile", "$usr granted $user admin rights" );
 			return $result->num_rows > 0;
@@ -202,7 +202,7 @@ class Login {
 	//#######
 	public static function revokeAdmin( $user, $usr) {
 		if( Login::isAdmin( $user ) ) {
-			if(!($db = connectDB()) ) {$this->error=LOGIN_MYSQL_ERROR;return false;}
+			if(!($db = connectDB()) ) return false;
 			if(!($result = $db->query( "DELETE FROM `login_admin` WHERE `login_admin_id` LIKE '$usr' )") ) ) return false;
 			$log( "Profile", "$usr revoked $user admin rights" );
 			return $result->num_rows > 0;
