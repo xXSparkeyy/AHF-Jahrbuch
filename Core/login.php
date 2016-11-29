@@ -1,7 +1,6 @@
 <?php require_once( "db.php" );
 
 
-
 define( "LOGIN_HASH_VALIDATION_OK",    0 );
 define( "LOGIN_HASH_VALIDATION_ERROR", 1 );
 define( "LOGIN_TOKEN_OK",              2 );
@@ -96,7 +95,7 @@ class Login {
 	function refreshToken( $token ) {
 		if( !($db = connectDB() ) ) return False;
 		if(!($result = $db->query( "SELECT `user_id`, `token` FROM `login_tokens` WHERE `token` Like '$token'" ) ) ) return False;
-		if(!($t = $this->createToken( $result->fetch_array(MYSQL_ASSOC)["user_id"] ))) return False;
+		if(!($t = $this->createToken( $result->fetch_array(MYSQLI_ASSOC)["user_id"] ))) return False;
 		if(!$this->deleteToken( $token )) return False;
 		setCookie( "login", $t["value"], time()+365*24*60*60, "/" );
 		return $t["value"];

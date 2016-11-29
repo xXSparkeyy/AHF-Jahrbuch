@@ -10,7 +10,7 @@
 			$l->register( $_POST["user_name"], $_POST["user_pw"] );
 			if( !$l->getError() ) {
 				$usr = $l->user;
-				Log:msg( "Profile", "$usr joined" );
+				Log::msg( "Profile", "$usr joined" );
 				header( "Location: /profile/$usr/edit/" );
 				return;
 			}
