@@ -24,11 +24,21 @@
   line-height: 25px;
   height: 1.8em;
 }
-li a{
+a{
   color: black;
 }
 .dashboard_info_container{
   height: 300px;
   overflow-y: scroll;
 
+}
+.tabs .tab a{
+  color: #8BC34A !important;
+  font-weight: bold;
+}
+.tabs .indicator{
+  background-color: #8BC34A !important;
+}
+div #surveys , #groups{
+  padding: 0;
 }
