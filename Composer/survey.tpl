@@ -5,8 +5,8 @@
 ?>
 <div class="container" action="#">
 <div class="row">
-<h1 class="center s12 l8 offset-l2"><?php if( SURVEYEDIT ) echo "<input type='text' name='title' value='".$s->getTitle()."'>"; else echo $s->getTitle(); if( !SURVEYEDIT && Login::isAdmin(Login::checkUser()) ) echo '<a href="edit/" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>'?></h1>
-<h5 class="center s12 l8 offset-l2">- <?php if( SURVEYEDIT ) echo "<input type='text' name='desc'  value='".$s->getDescription()."'>"; else echo $s->getDescription(); ?> -</h5>
+<h1 class="center s12 l8 offset-l2"><?php if( SURVEYEDIT ) echo "<input type='text' name='title' placeholder='".$s->getTitle()."'>"; else echo $s->getTitle(); if( !SURVEYEDIT && Login::isAdmin(Login::checkUser()) ) echo '<a href="edit/" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">edit</i></a>'?></h1>
+<h5 class="center s12 l8 offset-l2">- <?php if( SURVEYEDIT ) echo "<input type='text' name='desc'  placeholder='".$s->getDescription()."'>"; else echo $s->getDescription(); ?> -</h5>
 <?php
 if( !SURVEYEDIT && Login::isAdmin( Login::checkUser()["user_id"] ) ) {
 		echo '<ul><li><a href="delete/" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">delete</i></a>
@@ -39,7 +39,7 @@ if( !SURVEYEDIT && Login::isAdmin( Login::checkUser()["user_id"] ) ) {
 		$myvote = $question["myvote"];
 		$up = $myvote==1 ?"light-green-text":"";
 		$down = $myvote==-1?"red-text":"";
-		if( SURVEYEDIT ) echo "<div class='col card-panel grey lighten-5 z-depth-1 s12 l8 offset-l2'><h4><input name='$id' type='text' value='$title'></h4></div>";
+		if( SURVEYEDIT ) echo "<div class='col card-panel grey lighten-5 z-depth-1 s12 l8 offset-l2'><h4><input name='$id' type='text' placeholder='$title'></h4></div>";
 		else echo "<div id='$id' class='col card-panel grey lighten-5 z-depth-1 s12 l8 offset-l2'><h4><span style='float: right'><span id='votes_$id' class='votes'>$votes</span><a id='up_$id' href='javascript:vote($id,1)' style='font-size: inherit' class='material-icons $up'>expand_less</a><a id='down_$id' href='javascript:vote($id,-1)' style='font-size: inherit' class='material-icons $down'>expand_more</a></span>$title</h4></div>";
 	}
 	if( SURVEYEDIT ) echo "</div></form>";
