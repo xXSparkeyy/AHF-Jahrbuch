@@ -141,7 +141,7 @@ class Registration {
 		}
 		$l = new Login( md5( $username.$password.$_SERVER['REQUEST_TIME'] ) );
 		$this->error = false;
-		return true;
+		return $l;
 	}
 	
 }
