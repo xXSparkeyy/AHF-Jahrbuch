@@ -2,7 +2,7 @@
 <form class="container" method="post" action="/Signup/">
 	<div class="row s12">
 		<div class="input-field col s12 m4 offset-m4 center-align">
-          <h1>Login</h1>
+          <h1>Registrieren</h1>
         </div>
      </div>
      <div class="row s12">
