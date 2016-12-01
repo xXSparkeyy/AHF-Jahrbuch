@@ -52,8 +52,21 @@
      	</div>
      	</form>
      	<br><br>';
-
      ?>
+     <div class="row">
+     	<?php
+     	foreach(Group::inGroups(PROFILEUSR) as $group ) {
+     		$name = $group["name"];
+			$lnk = "/group/".$group["group_id"]."/";
+			echo "
+			<a href='$lnk' class='col s6 m3' style=\"padding: 2%\">
+				<div class='card-panel grey lighten-5 z-depth-1'>
+					<h4 class=\"center\">$name</h4>
+				</div>
+			</a>";
+		}
+		?>
+     </div>
      <script>
      var adb = document.getElementById( "adminbutton" )
      function grantAdmin() {

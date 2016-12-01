@@ -91,6 +91,13 @@ class Group {
 		$id = $this->id;if(!($result = $db->query( "SELECT 1 FROM `group_participants` WHERE `group_id` Like '$id' AND `user_id` Like '$user'") ) ) return false;
 		return $result->num_rows > 0;
 	}
+	
+	public static function inGroups($user) {
+		if(!($db = connectDB()) ) {$this->error=LOGIN_MYSQL_ERROR;return false;}
+		if(!($result = $db->query( "SELECT * FROM `group_meta` as a LEFT JOIN `group_participants` as b ON a.`group_id` LIKE b.`group_id` WHERE b.`user_id` LIKE 'LukaNagel99'") ) ) return false;
+		$ret = []; while(($e = $result->fetch_array(MYSQL_ASSOC))) { $ret[] = $e; }
+		return $ret;
+	}
 	//#######
 	//#
 	//#	    Checks if given user is moderator by user id 
