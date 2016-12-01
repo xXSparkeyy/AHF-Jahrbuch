@@ -22,7 +22,7 @@
 			</div>
 			<div class='col s6'>
 				<ul class='collection with-header'>
-					<li class='collection-header'><h4>Log's</h4></li>
+					<li class='collection-header'><h5>Log's</h5></li>
 					<div class='dashboard_info_container'>
 					<?php
 						$res = Log::getMessages( );
