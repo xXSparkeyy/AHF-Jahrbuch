@@ -32,7 +32,10 @@
 		}
 		
 		public function getAvatar( $modifier="" ) {
-			$path = "/media-upload/data/".$this->getID()."/avatar$modifier.jpg";
+			return Profile::_getAvatar($this->id,$modifier);
+		}
+		public static function _getAvatar( $user, $modifier="" ) {
+			$path = "/media-upload/data/$user/avatar$modifier.jpg";
 			if( file_exists($_SERVER["DOCUMENT_ROOT"].$path) ) return $path;
 			return NOPICPATH;
 		}

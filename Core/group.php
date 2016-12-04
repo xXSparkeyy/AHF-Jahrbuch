@@ -69,12 +69,13 @@ class Group {
 	}
 	public static function _addMember( $user, $id ) {
 		$db = connectDB();
-		if( Group::_isMember( $user, $id ) ) return true;
+		if( Group::_isMember( $user, $id ) ) return new Profile($user, false);
 		$db->query( "INSERT INTO `group_participants` (`group_id`, `user_id`, `mod`) VALUES ('$id','$user', 0)" );
+		return new Profile($user, false);
 	}
 	public static function _removeMember( $user, $id ) {
 		$db = connectDB();
-		$db->query( "DELETE FROM `group_participants` WHERE `group_id` LIKE '$id' AND `user_id` LIKE '$user'" );
+		return $db->query( "DELETE FROM `group_participants` WHERE `group_id` LIKE '$id' AND `user_id` LIKE '$user'" );
 	}
 
 	public static function removeGroup() {
@@ -126,11 +127,11 @@ class Group {
 	//#
 	//#######
 	public static function grantMod(  $usr, $user, $group ) {
-		if( !Group::isMod( $usr ) ) return false;
+		if( !Group::isMod( $group, $usr ) ) return false;
 			if(!($db = connectDB()) ) return false;
-			$result = $db->query( "UPDATE `group_participants` SET `mod`=1 WHERE `group_id` Like '$group' AND `user_id` Like '$usr'");
+			$result = $db->query( "UPDATE `group_participants` SET `mod`=1 WHERE `group_id` Like '$group' AND `user_id` Like '$user'");
 			Log::msg( "Groups", "$usr granted $user moderator rights in $group" );
-			return $result->num_rows > 0;
+			return true;
 	}
 	//#######
 	//#
@@ -138,11 +139,11 @@ class Group {
 	//#
 	//#######
 	public static function revokeMod(  $usr, $user, $group ) {
-			if( !Group::isMod( $usr ) ) return false;
+			if( !Group::isMod( $group, $usr ) ) return false;
 			if(!($db = connectDB()) ) return false;
-			$result = $db->query( "UPDATE `group_participants` SET `mod`=0 WHERE `group_id` Like '$group' AND `user_id` Like '$usr'");
+			$result = $db->query( "UPDATE `group_participants` SET `mod`=0 WHERE `group_id` Like '$group' AND `user_id` Like '$user'");
 			Log::msg( "Groups", "$usr revoked $user moderator rights in $group" );
-			return $result->num_rows > 0;
+			return true;
 	}
 
 }

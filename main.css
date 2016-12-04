@@ -70,4 +70,13 @@ div #surveys , #groups{
 .brand-logo{
   padding-left: 0.5em !important;
 }
-
+.avatar{
+	position: relative;
+	width: 100%;
+	background-size: cover !important;
+}
+.avatar:before{
+	content: "";
+	display: block;
+	padding-top: 100%;
+}

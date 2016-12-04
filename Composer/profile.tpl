@@ -3,23 +3,11 @@
 	if( PROFILEEDIT ) echo "<form method='get' action='/profile/setValues.php'>";
 ?>
 <br><br><br><br><br>
-<style>
-.avatar{
-	position: relative;
-	width: 100%;
-	background-size: cover !important;
-}
-.avatar:before{
-	content: "";
-	display: block;
-	padding-top: 100%;
-}
-</style>
 <div class="container">
 	<div class="row">
 		<div class="col s10 offset-s2 m4 offset-m4">
 			<div class="card-panel grey lighten-5 z-depth-1" style="position: relative">
-				<?php if(Login::isAdmin( $login_user["user_id"]) && !PROFILEEDIT ) echo '<a id="adminbutton" href="javascript:'.(Login::isAdmin(PROFILEUSR)?"revokeAdmin()\"":"grantAdmin()\" enabled").' class="btn-floating btn-large waves-effect waves-light red right" style="position: absolute; top: -9%; right: -9%"><i class="material-icons">star</i></a>' ?>
+				<?php if(Login::isAdmin( $login_user["user_id"]) && !PROFILEEDIT ) echo '<a id="adminbutton" href="javascript:'.(Login::isAdmin(PROFILEUSR)?"revokeAdmin()\" enabled ":"grantAdmin()\"").' class="btn-floating btn-large waves-effect waves-light red right" style="position: absolute; top: -9%; right: -9%"><i class="material-icons">star</i></a>' ?>
 				<?php if(PROFILEUSR == $login_user["user_id"] && !PROFILEEDIT ) echo '<a href="./edit" class="btn-floating btn-large waves-effect waves-light red right" style="position: absolute; top: -9%; right: -9%"><i class="material-icons">edit</i></a>' ?>
 				<ul class="tabs" style="margin-bottom:5px;">
 					<li class="tab col s6"><a href="#profilbild">Profil-</a></li>
@@ -117,7 +105,7 @@
      	var x = new XMLHttpRequest()
      	x.open( "GET", "/JSON/grantadmin/?user=<?php echo PROFILEUSR; ?>"  );
      	x.onreadystatechange = function() {
-     		if( x.readyState == 4 ) {
+     		if( x.readyState == 4 && x.status == 200 ) {
      			var a = eval(x.responseText);
      			if( a ) { adb.href="javascript:revokeAdmin()"; adb.removeAttribute("enabled")}
      			else    { adb.href="javascript:grantAdmin()";  adb.setAttribute("enabled","")}
@@ -129,7 +117,7 @@
      	var x = new XMLHttpRequest()
      	x.open( "GET", "/JSON/revokeadmin/?user=<?php echo PROFILEUSR; ?>" );
      	x.onreadystatechange = function() {
-     		if( x.readyState == 4 ) {
+     		if( x.readyState == 4 && x.status == 200 ) {
      			var a = eval(x.responseText);
      			if( a ) { adb.href="javascript:revokeAdmin()"; adb.removeAttribute("enabled")}
      			else    { adb.href="javascript:grantAdmin()";  adb.setAttribute("enabled","")}

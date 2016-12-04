@@ -1,4 +1,11 @@
-<?php require_once $_SERVER["DOCUMENT_ROOT"]."/Core/log.php"; require_once $_SERVER["DOCUMENT_ROOT"]."/Core/login.php";
-	if( !($user = $_GET["user"]) ) { echo "false"; return; }
-	echo Login::grantAdmin( $user, Login::checkUser()["user_id"] )?"true":"false";
+<?php require_once $_SERVER["DOCUMENT_ROOT"]."/Core/index.php";
+	$usr = Login::checkUser()["user_id"];
+	if( isset($_GET["user"]) && isset($_GET["user"]) ) {
+		$user = $_GET["user"];
+		$group = $_GET["group"];
+		if( Group::isMod( $usr ) ) {
+			echo !Group::grantMod( $usr, $user, $group )?"true":"false";
+		}
+	}
+	return false;
 ?>

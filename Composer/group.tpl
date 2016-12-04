@@ -14,36 +14,120 @@
      <div class="row">
 			 <div class='col s12'>
  				<ul class="tabs">
- 					<li class="tab col s6"><a href="#surveys" class="active">Mitglieder (<?php $group->getMembers( false ); echo count( $group ) ?>)</a></li>
- 					<li class="tab col s6"><a href="#groups">Bilder</a></li>
+ 					<li class="tab col s6"><a href="#members" class="active">Mitglieder (<?php echo count($group->getMembers()); ?>)</a></li>
+ 					<li class="tab col s6"><a href="#images">Bilder</a></li>
  				</ul>
- 				<div id="surveys" class="col s12" style="margin: 0 auto;">
-					<?php if( Group::isMod($group, $usr) ) { ?>
-					<a  href="#adduserview" class="waves-effect waves-light btn center modal-trigger" style="width: 49%;"><i class="material-icons left">add</i>Benutzer hinzufügen</a>
-					<a  href="#addremoveuserview" class="waves-effect waves-light btn center modal-trigger" style="width: 49%; "><i class="material-icons left">remove</i>Benutzer löschen</a>
-					<a  href="#addgrantuserview" class="waves-effect waves-light btn center modal-trigger" style="width: 49%;margin-top: 5px"><i class="material-icons left">add</i>Moderator ernnen</a>
-					<a  href="#revokegrantuserview" class="waves-effect waves-light btn center modal-trigger" style="width: 49%;margin-top: 5px"><i class="material-icons left">remove</i>Moderator entfernen</a>
-					<?php } ?>
+ 				<div id="members" class="col s12" style="margin: 0 auto;">
  						<ul class='collection'>
- 							<div >
-
+ 							<div id="memberparent">
+								<style>
+									.group-member       .controls {
+										position: absolute;
+										top: 0; left: 0;
+										width: 100%;
+										opacity: 0;
+										transition: opacity 0.3s linear;
+										padding: 20% 10%;
+									}
+									.group-member:hover .controls {
+										opacity: 1;
+									}
+									.modbutton {
+								 		background: grey !important;
+								 	}
+								 	.modbutton[enabled] {
+								 		background: #ffeb3b !important;
+								 	}
+								</style>
 								<?php
 								foreach($group->getMembers() as $member ) {
 									$name = $member->getFirstName()." ".$member->getLastName();
 									$id = $member->getID();
+									$img = $member->getAvatar();
+									$controls = !Group::isMod(GROUP,$login_user["user_id"])?"":'
+									<div class="controls">
+											<a id="modbutton'.$id.'" href="javascript:'.(Group::isMod(GROUP,$id,true)?"revokeMod('$id')\" enabled":"grantMod('$id')\"").' class="modbutton btn-floating btn-large waves-effect waves-light red left"><i class="material-icons">star</i></a>
+											<a href="javascript:kick(\''.$id.'\')" class="btn-floating btn-large waves-effect waves-light red right"><i class="material-icons">block</i></a>
+										</div>';
 								echo "
-								<div class='col s6 m3' style=\"padding: 2%\">
-									<div class='card-panel grey lighten-5 z-depth-1'>
-										<img src=\"/media/img/$id/profilbild\" class=\"circle responsive-img\">
+								<div id='member$id' class='col s6 m4 l3' style=\"padding: 2%\">
+									<div style=\"position: relative\" class='card-panel grey lighten-5 z-depth-1 group-member'>
+										<div style=\"position: relative\"><a href=\"/profiles/$id/\"><div style=\"background: url($img)\" class=\"avatar circle\"></div></a></div>
 										<h4 class=\"center\">$name</h4>
+										$controls
 									</div>
 								</div>";
 								}
+								if( Group::isMod(GROUP,$login_user["user_id"]) ) echo '<div id="addmembercard" class="col s6 m4 l3" style="padding: 2%">
+									<div style="position: relative" class="card-panel grey lighten-5 z-depth-1 group-member">
+										<div style="position: relative"><a class="modal-trigger" href="#adduserview"><div style="background: url(/media-upload/data/add.svg)" class="avatar circle"></div></a></div>
+										<h4 class="center">Benutzer Hinzufügen</h4>
+									</div>
+								</div>';
 								?>
+								
  							</div>
-
  						</ul>
  					</div>
+ 				
+ 					<script>
+						 function grantMod( id ) {
+						 	var adb = document.getElementById( "modbutton"+id )
+						 	var x = new XMLHttpRequest()
+						 	x.open( "GET", "/JSON/grantmod/?group=<?php echo GROUP; ?>&user="+id  );
+						 	x.onreadystatechange = function() {
+						 		if( x.readyState == 4 && x.status == 200 ) {
+						 			var a = true;//eval(x.responseText);
+						 			if( a ) { adb.href="javascript:revokeMod('"+id+"')"; adb.setAttribute("enabled","")}
+						 			else    { adb.href="javascript:grantMod('"+id+"')";  adb.removeAttribute("enabled")}
+						 		}
+						 	}
+						 	x.send();
+						 }
+						 function revokeMod( id ) {
+						 	var adb = document.getElementById( "modbutton"+id )
+						 	var x = new XMLHttpRequest()
+						 	x.open( "GET", "/JSON/revokemod/?group=<?php echo GROUP; ?>&user="+id );
+						 	x.onreadystatechange = function() {
+						 		if( x.readyState == 4 && x.status == 200 ) {
+						 			var a = false;//eval(x.responseText);
+						 			if( a ) { adb.href="javascript:revokeMod('"+id+"')"; adb.setAttribute("enabled","")}
+						 			else    { adb.href="javascript:grantMod('"+id+"')";  adb.removeAttribute("enabled")}
+						 		}
+						 	}
+						 	x.send();
+						 }
+						 function kick( id ) {
+						 	var adb = document.getElementById( "member"+id )
+						 	var x = new XMLHttpRequest()
+						 	x.open( "GET", "/JSON/removefromgroup/?group=<?php echo GROUP; ?>&user="+id );
+						 	x.onreadystatechange = function() {
+						 		if( x.readyState == 4 && x.status == 200 ) {
+						 			var name = adb.getElementsByTagName("h4")[0].innerText
+						 			adb.remove();
+						 			document.getElementById( "addlist" ).innerHTML+="<li style='font-size: 140%;' id='addmbmr"+id+"' style='padding: 1%'><a href=\"javascript:add('"+id+"')\"><i style='vertical-align: middle;font-size: inherit'class=\"material-icons\">add_circle_outline</i> "+name+"</a></li>";
+						 		}
+						 	}
+						 	x.send();
+						 }
+						 function add( id ) {
+						 	var adb = document.getElementById( "addmbmr"+id )
+						 	var x = new XMLHttpRequest()
+						 	x.open( "GET", "/JSON/addtogroup/?group=<?php echo GROUP; ?>&user="+id );
+						 	x.onreadystatechange = function() {
+						 		if( x.readyState == 4 && x.status == 200 ) {
+						 			adb.remove();
+						 			eval( "var m = "+x.responseText )
+									var o = document.createElement('div');
+									o.innerHTML = "<div id='member"+id+"' class='col s6 m4 l3' style=\"padding: 2%\"><div style=\"position: relative\" class='card-panel grey lighten-5 z-depth-1 group-member'><div style=\"position: relative\"><a href=\"/profiles/"+id+"/\"><div style=\"background: url("+m.img+")\" class=\"avatar circle\"></div></a></div><h4 class=\"center\">"+m.name+"</h4><div class=\"controls\"><a id=\"modbutton"+id+"\" href=\"javascript:grantMod('"+id+"')\" class=\"modbutton btn-floating btn-large waves-effect waves-light red left\"><i class=\"material-icons\">star</i></a><a href=\"javascript:kick('"+id+"')\" class=\"btn-floating btn-large waves-effect waves-light red right\"><i class=\"material-icons\">block</i></a></div></div></div>"
+						 			o = o.firstChild;
+						 			document.getElementById( "memberparent" ).insertBefore(o,document.getElementById( "addmembercard" ))
+						 		}
+						 	}
+						 	x.send();
+						 }
+     				</script>
+ 					
  					<div id="groups" class="col s12">
  						<ul class='collection with-header'>
  							<div align="center">
@@ -91,93 +175,18 @@
 	<div id="adduserview" class="modal modal-fixed-footer">
 	    <div class="modal-content">
 	      <h4>Benutzer hinzufügen:</h4>
+	      <ul id="addlist" style="padding-left: 1%;">
 	      <?php
-				$res = Profile::listProfiles(  );
-				$gid = $group->getID();
-				$_POST = array();
+				$res = Profile::listProfiles();
 				foreach( $res as $itm ) {
 					$name = $itm["FName"]." ".$itm["LName"];
 					$link = $itm["user_id"];
-					echo "
-					<form action=\"/Group/setValues.php\" class='modal-users' id=\"addmem\" method=\"post\">
-						<input type=\"text\" style=\"display:none;\" id=\"addmember\" name=\"addmember\" value=\"$link\"  />
-						<input type=\"text\" style=\"display:none;\" id=\"group\" name=\"group\" value=\"$gid\"  />
-						<input type=\"submit\" id=\"submember\" class=\"waves-effect waves-light btn center\" name=\"submit\" value=\"$name\" />
-					</form>
-					";
+					if( $group->isMember($link) ) continue;
+					echo "<li style='font-size: 140%;' id='addmbmr$link' style='padding: 1%'><a href=\"javascript:add('$link')\"><i style='vertical-align: middle;font-size: inherit'class=\"material-icons\">add_circle_outline</i> $name</a></li>";
 				}?>
+			</ul>
 	    </div>
 	    <div class="modal-footer">
 	      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Abbrechen</a>
 	    </div>
 	  </div>
-		<div id="addremoveuserview" class="modal bottom-sheet">
-				<div class="modal-content">
-					<h4>Benutzer löschen:</h4>
-					<?php
-					$_POST = array();
-					$gid = $group->getID();
-					$res = $group->getMembers( );
-					foreach( $res as $itm ) {
-						$name = $itm->getFirstName()." ".$itm->getLastName();
-						$link = $itm->getID();
-						echo "
-						<form action=\"/Group/setValues.php\" id=\"remmem\" method=\"post\">
-							<input type=\"text\" style=\"display:none;\" id=\"removeMember\" name=\"removeMember\" value=\"$link\"  />
-							<input type=\"text\" style=\"display:none;\" id=\"group\" name=\"group\" value=\"$gid\"  />
-							<input type=\"submit\" id=\"remmember\" class=\"waves-effect waves-light btn center\" name=\"submit\" value=\"$name\" />
-						</form>
-						";
-					}?>
-				</div>
-				<div class="modal-footer">
-					<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Abbrechen</a>
-				</div>
-			</div>
-			<div id="addgrantuserview" class="modal bottom-sheet">
-					<div class="modal-content">
-						<h4>Benutzer als Moderator ernennen:</h4>
-						<?php
-						$_POST = array();
-						$gid = $group->getID();
-						$res = $group->getMembers( );
-						foreach( $res as $itm ) {
-							$name = $itm->getFirstName()." ".$itm->getLastName();
-							$link = $itm->getID();
-							echo "
-							<form action=\"/Group/setValues.php\" id=\"grantMod\" method=\"post\">
-								<input type=\"text\" style=\"display:none;\" id=\"grantMod\" name=\"grantMod\" value=\"$link\"  />
-								<input type=\"text\" style=\"display:none;\" id=\"group\" name=\"group\" value=\"$gid\"  />
-								<input type=\"submit\" id=\"grantModbtn\" class=\"waves-effect waves-light btn center\" name=\"submit\" value=\"$name\" />
-							</form>
-							";
-						}?>
-					</div>
-					<div class="modal-footer">
-						<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Abbrechen</a>
-					</div>
-				</div>
-				<div id="revokegrantuserview" class="modal bottom-sheet">
-						<div class="modal-content">
-							<h4>Benutzer als Moderator entfernen:</h4>
-							<?php
-							$_POST = array();
-							$gid = $group->getID();
-							$res = $group->getMembers( );
-							foreach( $res as $itm ) {
-								if(Group::hasModPriv($gid, $itm->getID())){
-								$name = $itm->getFirstName()." ".$itm->getLastName();
-								$link = $itm->getID();
-								echo "
-								<form action=\"/Group/setValues.php\" id=\"revokeMod\" method=\"post\">
-									<input type=\"text\" style=\"display:none;\" id=\"revokeMod\" name=\"revokeMod\" value=\"$link\"  />
-									<input type=\"text\" style=\"display:none;\" id=\"group\" name=\"group\" value=\"$gid\"  />
-									<input type=\"submit\" id=\"revokeModbtn\" class=\"waves-effect waves-light btn center\" name=\"submit\" value=\"$name\" />
-								</form>
-								";
-							}}?>
-						</div>
-						<div class="modal-footer">
-							<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Abbrechen</a>
-						</div>
-					</div>
