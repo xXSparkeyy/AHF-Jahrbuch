@@ -88,7 +88,7 @@
       <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Abbrechen</a>
     </div>
   </div>
-	<div id="adduserview" class="modal bottom-sheet">
+	<div id="adduserview" class="modal modal-fixed-footer">
 	    <div class="modal-content">
 	      <h4>Benutzer hinzufügen:</h4>
 	      <?php
@@ -99,7 +99,7 @@
 					$name = $itm["FName"]." ".$itm["LName"];
 					$link = $itm["user_id"];
 					echo "
-					<form action=\"/Group/setValues.php\" id=\"addmem\" method=\"post\">
+					<form action=\"/Group/setValues.php\" class='modal-users' id=\"addmem\" method=\"post\">
 						<input type=\"text\" style=\"display:none;\" id=\"addmember\" name=\"addmember\" value=\"$link\"  />
 						<input type=\"text\" style=\"display:none;\" id=\"group\" name=\"group\" value=\"$gid\"  />
 						<input type=\"submit\" id=\"submember\" class=\"waves-effect waves-light btn center\" name=\"submit\" value=\"$name\" />

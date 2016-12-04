@@ -50,6 +50,7 @@
 				
 				try{ initializeUpload("profil")     } catch(e) {}
 				try{ initializeUpload("profilkind") } catch(e) {}
+				try{ initializeUpload("group") } catch(e) {}
 				
 				c.click(function(){
 					var addmem = $('#addmem, #remmem, #grantMod, #revokeMod');

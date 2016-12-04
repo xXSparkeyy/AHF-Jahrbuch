@@ -62,15 +62,20 @@ class Group {
 		loadMeta();
 	}
 	public function addMember( $user ) {
-		$db = connectDB();
-		if( $this->isMember( $uid ) ) return true;
-		$id = $this->id; $db->query( "INSERT INTO `group_participants` (`group_id`, `user_id`, `mod`) VALUES ('$id','$user', 0)" );
+		return Group::_addMember($user,$this->id);
 	}
 	public function removeMember( $user ) {
-		$db = connectDB();
-		$id = $this->id; $db->query( "DELETE FROM `group_participants` WHERE `group_id` LIKE '$id' AND `user_id` LIKE '$user'" );
+		return Group::_removeMember($user,$this->id);
 	}
-
+	public static function _addMember( $user, $id ) {
+		$db = connectDB();
+		if( Group::_isMember( $user, $id ) ) return true;
+		$db->query( "INSERT INTO `group_participants` (`group_id`, `user_id`, `mod`) VALUES ('$id','$user', 0)" );
+	}
+	public static function _removeMember( $user, $id ) {
+		$db = connectDB();
+		$db->query( "DELETE FROM `group_participants` WHERE `group_id` LIKE '$id' AND `user_id` LIKE '$user'" );
+	}
 
 	public static function removeGroup() {
 		$db = connectDB();
@@ -88,8 +93,11 @@ class Group {
 
 
 	public function isMember( $user ) {
+		return Group::_isMember($user,$this->id);
+	}
+	public static function _isMember( $user, $id ) {
 		if(!($db = connectDB()) ) return false;
-		$id = $this->id;if(!($result = $db->query( "SELECT 1 FROM `group_participants` WHERE `group_id` Like '$id' AND `user_id` Like '$user'") ) ) return false;
+		if(!($result = $db->query( "SELECT 1 FROM `group_participants` WHERE `group_id` Like '$id' AND `user_id` Like '$user'") ) ) return false;
 		return $result->num_rows > 0;
 	}
 	public static function inGroups($user) {
