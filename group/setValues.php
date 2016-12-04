@@ -4,10 +4,13 @@
 		$g = isset($_POST["group"])?$_POST["group"]:"";
 		if( Group::isMod($g, $usr) ) {
 			if( isset($_POST["newgroup"]) ) {
-				$g = (Group::addGroup( $_POST["name"], $_POST["desc"] ))->getID();
-				http_response_code( 302 );
-				header( "Location: /group/$g/" );
-				return;
+				$g = Group::addGroup( $_POST["name"], $_POST["desc"] );
+				if( $g ) {
+					$g = $g->getID();
+					http_response_code( 302 );
+					header( "Location: /group/$g/" );
+					return;
+				}
 			}
 			if( !$g ) break;
 			if( isset($_POST["name"]) && isset($_POST["desc"]) ) {

@@ -89,10 +89,26 @@
 								?>
 							</div>
 						</ul>
-						<button>Add Group</button>
+						<a class="modal-trigger waves-effect waves-light btn" href="#addgroup">Add group</a>
+
+					  <div id="addgroup" class="modal">
+						<div class="modal-content">
+						  <form id="createform" method="POST" action="/group/setValues.php"><h4>Create new Group</h4>
+						  <div class="input-field col s12"><input id="cfn" type="text" name="name"><label for="cfn">Name der Gruppe</label></div>
+						  <div class="input-field col s12"><input id="cfd" type="text" name="desc"><label for="cfd">Beschreibung</label></div>
+						  <input type="hidden" name="newgroup" value="true">
+						  </form>
+						</div>
+						<div class="modal-footer">
+						  <a href="javascript:$('#createform').submit()" class="modal-action waves-effect waves-green btn-flat ">Create</a>
+						  <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat ">Cancel</a>
+						</div>
+					  </div>
 					</div>
 
 			</div>
+			
+			  
 		<?php }else{ ?>
 		<h1 class='center s12 l8 offset-l2'>Jahrbuch seite des MH27 Abschluss Jahres</h1>
 		<h5 class='center s12 l8 offset-l2'>Logge dich ein oder registriere dich ( 4 free ) um den vollen inhalt zu genießen.<br>Das desing is ( schlampig ) mit http://materializecss.com/navbar.html gemacht, so schlampig das hier ne verlinkung fehlt.</h5>

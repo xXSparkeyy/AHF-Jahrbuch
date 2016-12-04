@@ -5,7 +5,7 @@
 <br><br><br><br><br>
 <div class="container">
 	<div class="row">
-		<div class="col s10 offset-s2 m4 offset-m4">
+		<div class="col s10 offset-s1 m8 offset-m2 l6 offset-l3">
 			<div class="card-panel grey lighten-5 z-depth-1" style="position: relative">
 				<?php if(Login::isAdmin( $login_user["user_id"]) && !PROFILEEDIT ) echo '<a id="adminbutton" href="javascript:'.(Login::isAdmin(PROFILEUSR)?"revokeAdmin()\" enabled ":"grantAdmin()\"").' class="btn-floating btn-large waves-effect waves-light red right" style="position: absolute; top: -9%; right: -9%"><i class="material-icons">star</i></a>' ?>
 				<?php if(PROFILEUSR == $login_user["user_id"] && !PROFILEEDIT ) echo '<a href="./edit" class="btn-floating btn-large waves-effect waves-light red right" style="position: absolute; top: -9%; right: -9%"><i class="material-icons">edit</i></a>' ?>
@@ -15,7 +15,7 @@
 				</ul>
 				<div id="profilbild" style="position: relative"><a <?php if( PROFILEUSR == $login_user["user_id"] ) echo 'href="#uploadview" class="modal-trigger"';?>><div id="avatar" src="<?php echo $p->getAvatar(); ?>" style="background: url(<?php echo $p->getAvatar(); ?>)" alt="" class="avatar circle responsive-img"></div><?php if( PROFILEUSR == $login_user["user_id"] ) echo '<i style="position: absolute; bottom: 1%; right: 1%; font-size: 300%" class="material-icons">backup</i>';?></a></div>
 				<div id="kinderbild" style="position: relative"><a <?php if( PROFILEUSR == $login_user["user_id"] ) echo 'href="#uploadviewkind" class="modal-trigger"';?>><div id="subavatar" src="<?php echo $p->getAvatar('_kind'); ?>" style="background: url(<?php echo $p->getAvatar('_kind'); ?>)" alt="" class="avatar circle responsive-img"></div><?php if( PROFILEUSR == $login_user["user_id"] ) echo '<i style="position: absolute; bottom: 1%; right: 1%; font-size: 300%" class="material-icons">backup</i>';?></a></div>
-				<h4 class="center"><?php if( !PROFILEEDIT ) echo $p->getFirstName()." ".$p->getLastName();
+				<br><h4 class="center"><?php if( !PROFILEEDIT ) echo $p->getFirstName()." ".$p->getLastName();
 										 else echo "<input name='firstname' value='".$p->getFirstName()."' /><input name='lastname' value='".$p->getLastName()."' />";?></h4></div>
 		</div>
      </div>

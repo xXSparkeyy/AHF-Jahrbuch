@@ -14,7 +14,7 @@
      <div class="row">
 			 <div class='col s12'>
  				<ul class="tabs">
- 					<li class="tab col s6"><a href="#members" class="active">Mitglieder (<?php echo count($group->getMembers()); ?>)</a></li>
+ 					<li class="tab col s6"><a href="#members" class="active">Mitglieder</a></li>
  					<li class="tab col s6"><a href="#images">Bilder</a></li>
  				</ul>
  				<div id="members" class="col s12" style="margin: 0 auto;">

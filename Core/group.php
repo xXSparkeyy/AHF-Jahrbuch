@@ -85,11 +85,11 @@ class Group {
 	}
 	public static function createGroup( $name, $desc ) {
 		$db = connectDB();
-		if( $db->query( "INSERT INTO `group_meta` SET `name`='$name', `description`='$desc'" ) ) return;
+		if( !$db->query( "INSERT INTO `group_meta` SET `name`='$name', `description`='$desc'" ) ) return false;
 		return new Group( $db->query("SELECT LAST_INSERT_ID()")->fetch_array(MYSQL_NUM)[0] );
 	}
 	public static function addGroup( $name, $desc ) {
-		return createGroup( $name, $desc );
+		return Group::createGroup( $name, $desc );
 	}
 
 
