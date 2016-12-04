@@ -14,18 +14,7 @@
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
 		<script type="text/javascript" src="https://oss.maxcdn.com/jquery.form/3.50/jquery.form.min.js"></script>
 		<script>
-
-			$(".button-collapse").sideNav();
-			$(document).ready(function(){
-					$(".modal-trigger").leanModal();
-
-						var c = $('#submember, #remmember, #grantModbtn, #revokeModbtn'); // upload button
-					  var b = $('#senden'); // upload button
-				  b.click(function(){
-						var f = $('#imguploader');
-
-						var p = $('#preview'); // preview area
-						var l = $('#loading');
+			function uploadImage(f,b,p,l) {
 				    // implement with ajaxForm Plugin
 				    f.ajaxForm({
 				      beforeSend: function(){
@@ -38,39 +27,52 @@
 				        b.removeAttr('disabled');
 								l.fadeOut();
 				        p.html(e).fadeIn();
-
+						try { reloadImage(); } catch(e){}
 				      },
 				      error: function(e){
 				        b.removeAttr('disabled');
 				        p.html(e).fadeIn();
 				      }
-				    });
-				  });
-
-					c.click(function(){
-						var addmem = $('#addmem, #remmem, #grantMod, #revokeMod');
-						var l = $('#loading');
-				    // implement with ajaxForm Plugin
-				    addmem.ajaxForm({
-				      beforeSend: function(){
-				        c.attr('disabled', 'disabled');
-								l.fadeIn();
-				      },
-				      success: function(e){
-				        addmem.resetForm();
-								Materialize.toast('Erledigt!', 4000)
-				        c.removeAttr('disabled');
-								l.fadeOut();
-
-				      },
-				      error: function(e){
-				        c.removeAttr('disabled');
-								l.fadeOut();
-				      }
-				    });
-				  });
-
-			  });
+				  	});
+				  }
+				  function initializeUpload(x) {
+				  	n=x;
+					$('#uploadbutton'+n).click(function(){
+						n=x;
+						uploadImage($('#imguploader'+n), $('#uploadbutton'+n), $('#preview'+n), $('#loading'+n) )
+					});
+				}
+			$(".button-collapse").sideNav();
+			$(document).ready(function(){
+				$(".modal-trigger").leanModal();
+				
+				var c = $('#submember, #remmember, #grantModbtn, #revokeModbtn'); // upload button
+				
+				try{ initializeUpload("profil")     } catch(e) {}
+				try{ initializeUpload("profilkind") } catch(e) {}
+				
+				c.click(function(){
+					var addmem = $('#addmem, #remmem, #grantMod, #revokeMod');
+					var l = $('#loading');
+				// implement with ajaxForm Plugin
+					addmem.ajaxForm({
+					beforeSend: function(){
+						c.attr('disabled', 'disabled');
+						l.fadeIn();
+					},
+					success: function(e){
+						addmem.resetForm();
+						Materialize.toast('Erledigt!', 4000)
+						c.removeAttr('disabled');
+						l.fadeOut();
+				  	},
+					error: function(e){
+						c.removeAttr('disabled');
+						l.fadeOut();
+					}
+					});
+				});
+			});
 
 
 

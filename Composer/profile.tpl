@@ -3,6 +3,18 @@
 	if( PROFILEEDIT ) echo "<form method='get' action='/profile/setValues.php'>";
 ?>
 <br><br><br><br><br>
+<style>
+.avatar{
+	position: relative;
+	width: 100%;
+	background-size: cover !important;
+}
+.avatar:before{
+	content: "";
+	display: block;
+	padding-top: 100%;
+}
+</style>
 <div class="container">
 	<div class="row">
 		<div class="col s10 offset-s2 m4 offset-m4">
@@ -13,8 +25,8 @@
 					<li class="tab col s6"><a href="#profilbild">Profil-</a></li>
 					<li class="tab col s6"><a href="#kinderbild">Kinderbild</a></li>
 				</ul>
-				<div id="profilbild"><a <?php if( PROFILEUSR == $login_user["user_id"] ) echo 'href="#uploadview" class="modal-trigger"';?> style="position: relative"><img src="<?php echo $p->getAvatar(); ?>" alt="" class="circle responsive-img"><?php if( PROFILEUSR == $login_user["user_id"] ) echo '<i style="position: absolute; bottom: 1%; right: 1%;" class="material-icons">backup</i>';?></a></div>
-				<div id="kinderbild"><a <?php if( PROFILEUSR == $login_user["user_id"] ) echo 'href="#uploadviewkind" class="modal-trigger"';?> style="position: relative"><img src="<?php echo $p->getAvatar('_kind'); ?>" alt="" class="circle responsive-img"><?php if( PROFILEUSR == $login_user["user_id"] ) echo '<i style="position: absolute; bottom: 1%; right: 1%;" class="material-icons">backup</i>';?></a></div>
+				<div id="profilbild" style="position: relative"><a <?php if( PROFILEUSR == $login_user["user_id"] ) echo 'href="#uploadview" class="modal-trigger"';?>><div id="avatar" src="<?php echo $p->getAvatar(); ?>" style="background: url(<?php echo $p->getAvatar(); ?>)" alt="" class="avatar circle responsive-img"></div><?php if( PROFILEUSR == $login_user["user_id"] ) echo '<i style="position: absolute; bottom: 1%; right: 1%; font-size: 300%" class="material-icons">backup</i>';?></a></div>
+				<div id="kinderbild" style="position: relative"><a <?php if( PROFILEUSR == $login_user["user_id"] ) echo 'href="#uploadviewkind" class="modal-trigger"';?>><div id="subavatar" src="<?php echo $p->getAvatar('_kind'); ?>" style="background: url(<?php echo $p->getAvatar('_kind'); ?>)" alt="" class="avatar circle responsive-img"></div><?php if( PROFILEUSR == $login_user["user_id"] ) echo '<i style="position: absolute; bottom: 1%; right: 1%; font-size: 300%" class="material-icons">backup</i>';?></a></div>
 				<h4 class="center"><?php if( !PROFILEEDIT ) echo $p->getFirstName()." ".$p->getLastName();
 										 else echo "<input name='firstname' value='".$p->getFirstName()."' /><input name='lastname' value='".$p->getLastName()."' />";?></h4></div>
 		</div>
@@ -82,20 +94,24 @@
       <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Abbrechen</a>
     </div>
   </div>
-	<div id="uploadviewkind" class="modal bottom-sheet">
-	    <div class="modal-content">
-	      <h4>Profilbild hochladen:</h4>
-	      <?php Upload::showUploadSection('profilkind');?>
-	    </div>
-	    <div class="modal-footer">
-	      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Abbrechen</a>
-	    </div>
-	  </div>
+  <div id="uploadviewkind" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Profilbild hochladen:</h4>
+      <?php Upload::showUploadSection('profilkind');?>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Abbrechen</a>
+    </div>
+  </div>
      <script>
-     $(document).ready(function(){
-    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
-    $('.modal').modal();
-  	});
+  	function reloadImage() {
+  		tmp = document.getElementById( "avatar" ).getAttribute("src");
+  		document.getElementById( "avatar" ).style.background = "";
+  		document.getElementById( "avatar" ).style.background = "url("+tmp+"?nocache="+(new Date().getTime())+")";
+  		tmp = document.getElementById( "subavatar" ).getAttribute("src");
+  		document.getElementById( "subavatar" ).style.background = "";
+  		document.getElementById( "subavatar" ).style.background = "url("+tmp+"?nocache="+(new Date().getTime())+")";
+  	}
      var adb = document.getElementById( "adminbutton" )
      function grantAdmin() {
      	var x = new XMLHttpRequest()

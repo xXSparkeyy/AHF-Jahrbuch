@@ -1,7 +1,41 @@
  <?php require_once $_SERVER["DOCUMENT_ROOT"]."/Core/index.php";
 
+	function codeToMessage($code) 
+    { 
+        switch ($code) { 
+            case UPLOAD_ERR_INI_SIZE: 
+                $message = "Das Bild ist zu Groß!"; 
+                break; 
+            case UPLOAD_ERR_FORM_SIZE: 
+                $message = "Das Bild ist zu Groß!";
+                break; 
+            case UPLOAD_ERR_PARTIAL: 
+                $message = "Das Bild wurde nicht vollstandig hochgeladen"; 
+                break; 
+            case UPLOAD_ERR_NO_FILE: 
+                $message = "Es Wurde kein Bild hochgeladen!"; 
+                break; 
+            case UPLOAD_ERR_NO_TMP_DIR: 
+                $message = "Interner Fehler ( 1 )"; 
+                break; 
+            case UPLOAD_ERR_CANT_WRITE: 
+                $message = "Interner Fehler ( 2 )"; 
+                break; 
+            case UPLOAD_ERR_EXTENSION: 
+                $message = "Format nicht zulässig!"; 
+                break; 
+
+            default: 
+                $message = "Interner Fehler ( 3 )"; 
+                break; 
+        } 
+        return $message; 
+    } 
+
+
     if ($_SERVER['REQUEST_METHOD'] == 'POST')
     {
+      $r = $_SERVER["DOCUMENT_ROOT"];
       if(isset($_FILES['profil'])){
         $statement = Login::checkUser()["user_id"];
         $upload_type = 'profil';
@@ -12,19 +46,22 @@
         $statement = Login::checkUser()["user_id"];
         $upload_type = 'profilkind';
       }
-      if (!file_exists('../media/img/'.$statement)) {
-        mkdir('../media/img/'.$statement, 0777, true);
-      echo 'pfad erstellt';
+      if (!file_exists("$r/media-upload/data/$statement")) {
+        mkdir("$r/media-upload/data/$statement", 0777, true);
       }
       $max_size = 6500*6500;
       $extensions = array('jpeg', 'jpg', 'png', 'gif');
-      $dir = '../media-upload/data/'.$statement.'/';
+      $dir = "$r/media-upload/data/$statement/";
       $count = 0;
         // loop all files
-        foreach ( $_FILES[$upload_type]['name'] as $i => $name )
+        foreach ( $_FILES[$upload_type]['name'] as $i => $name ) {
 
-        {
-
+		// if file not uploaded then skip it
+        if ( $_FILES[$upload_type]['error'][$i] != 0 ) {
+        	echo codeToMessage( $_FILES[$upload_type]['error'][$i] )."<br>";
+          continue;
+        }
+          
         // if file not uploaded then skip it
         if ( !is_uploaded_file($_FILES[$upload_type]['tmp_name'][$i]) )
           continue;
@@ -63,10 +100,11 @@
 
           if( imagejpeg($image, $newone,100) )
 
-            $count;
+            $count++;
       }
 
       echo $count." Bild(er) erfolgreich hochgeladen!";
 
     }
+    
  ?>

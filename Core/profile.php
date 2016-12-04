@@ -32,8 +32,8 @@
 		}
 		
 		public function getAvatar( $modifier="" ) {
-			$path = "/media-upload/data/img/".$this->getID()."/avatar$modifier.jpg";
-			if( file_exists($path) ) return $path;
+			$path = "/media-upload/data/".$this->getID()."/avatar$modifier.jpg";
+			if( file_exists($_SERVER["DOCUMENT_ROOT"].$path) ) return $path;
 			return NOPICPATH;
 		}
 
