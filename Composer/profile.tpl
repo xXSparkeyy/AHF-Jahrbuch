@@ -7,14 +7,14 @@
 	<div class="row">
 		<div class="col s10 offset-s2 m4 offset-m4">
 			<div class="card-panel grey lighten-5 z-depth-1" style="position: relative">
-				<?php if(Login::isAdmin( $login_user["user_id"]) ) echo '<a id="adminbutton" href="javascript:'.(Login::isAdmin(PROFILEUSR)?"revokeAdmin()\"":"grantAdmin()\" enabled").' class="btn-floating btn-large waves-effect waves-light red right" style="position: absolute; top: -9%; right: -9%"><i class="material-icons">star</i></a>' ?>
-				<?php if(PROFILEUSR == $login_user["user_id"]) echo '<a href="./edit" class="btn-floating btn-large waves-effect waves-light red right" style="position: absolute; top: -9%; right: -9%"><i class="material-icons">edit</i></a>' ?>
+				<?php if(Login::isAdmin( $login_user["user_id"]) && !PROFILEEDIT ) echo '<a id="adminbutton" href="javascript:'.(Login::isAdmin(PROFILEUSR)?"revokeAdmin()\"":"grantAdmin()\" enabled").' class="btn-floating btn-large waves-effect waves-light red right" style="position: absolute; top: -9%; right: -9%"><i class="material-icons">star</i></a>' ?>
+				<?php if(PROFILEUSR == $login_user["user_id"] && !PROFILEEDIT ) echo '<a href="./edit" class="btn-floating btn-large waves-effect waves-light red right" style="position: absolute; top: -9%; right: -9%"><i class="material-icons">edit</i></a>' ?>
 				<ul class="tabs" style="margin-bottom:5px;">
 					<li class="tab col s6"><a href="#profilbild">Profil-</a></li>
 					<li class="tab col s6"><a href="#kinderbild">Kinderbild</a></li>
 				</ul>
-				<div id="profilbild"><a href="#uploadview" class="modal-trigger"><img src="/media/img/<?php echo $p->getID(); ?>/profilbild" alt="" class="circle responsive-img"></a></div>
-				<div id="kinderbild"><a href="#uploadviewkind" class="modal-trigger"><img src="/media/img/<?php echo $p->getID(); ?>/kinderbild" alt="" class="circle responsive-img"></a></div>
+				<div id="profilbild"><a <?php if( PROFILEUSR == $login_user["user_id"] ) echo 'href="#uploadview" class="modal-trigger"';?> style="position: relative"><img src="<?php echo $p->getAvatar(); ?>" alt="" class="circle responsive-img"><?php if( PROFILEUSR == $login_user["user_id"] ) echo '<i style="position: absolute; bottom: 1%; right: 1%;" class="material-icons">backup</i>';?></a></div>
+				<div id="kinderbild"><a <?php if( PROFILEUSR == $login_user["user_id"] ) echo 'href="#uploadviewkind" class="modal-trigger"';?> style="position: relative"><img src="<?php echo $p->getAvatar('_kind'); ?>" alt="" class="circle responsive-img"><?php if( PROFILEUSR == $login_user["user_id"] ) echo '<i style="position: absolute; bottom: 1%; right: 1%;" class="material-icons">backup</i>';?></a></div>
 				<h4 class="center"><?php if( !PROFILEEDIT ) echo $p->getFirstName()." ".$p->getLastName();
 										 else echo "<input name='firstname' value='".$p->getFirstName()."' /><input name='lastname' value='".$p->getLastName()."' />";?></h4></div>
 		</div>
@@ -92,6 +92,10 @@
 	    </div>
 	  </div>
      <script>
+     $(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal();
+  	});
      var adb = document.getElementById( "adminbutton" )
      function grantAdmin() {
      	var x = new XMLHttpRequest()
@@ -120,10 +124,10 @@
      </script>
      <style>
      	#adminbutton {
-     		background: #ffeb3b !important;
+     		background: grey !important;
      	}
      	#adminbutton[enabled] {
-     		background: #2196F3 !important;
+     		background: #ffeb3b !important;
      	}
      </style>
 </div>

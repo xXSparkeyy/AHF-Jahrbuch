@@ -7,5 +7,6 @@
 	require_once( "profile.php" );   //TODO ### Finished
 	require_once( "group.php" );     //TODO ### Finished
 	require_once( "search.php" );    //TODO ### Finished
+	require_once( "upload.php" );    //TODO ### Finished
 	//require_once( "gallery.php" );   //TODO #!! No need
 ?>

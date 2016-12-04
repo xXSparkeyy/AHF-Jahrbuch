@@ -1,5 +1,7 @@
 <?php require_once( "db.php" );
 
+	define( "NOPICPATH", "/media-upload/data/nopic.gif" );
+
 	class Profile {
 
 		public function Profile( $id, $load_fields=true ) {
@@ -27,6 +29,12 @@
 
 		public function getFields() {
 			return $this->fields;
+		}
+		
+		public function getAvatar( $modifier="" ) {
+			$path = "/media-upload/data/img/".$this->getID()."/avatar$modifier.jpg";
+			if( file_exists($path) ) return $path;
+			return NOPICPATH;
 		}
 
 		protected function loadBasicInfo( ) {

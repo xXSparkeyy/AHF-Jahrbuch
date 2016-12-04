@@ -18,7 +18,7 @@
       }
       $max_size = 6500*6500;
       $extensions = array('jpeg', 'jpg', 'png', 'gif');
-      $dir = '../media/img/'.$statement.'/';
+      $dir = '../media-upload/data/'.$statement.'/';
       $count = 0;
         // loop all files
         foreach ( $_FILES[$upload_type]['name'] as $i => $name )
@@ -38,7 +38,8 @@
           continue;
 
 
-          if(file_exists($dir."profilbild.jpg") && $upload_type == 'profil') unlink($dir."profilbild.jpg");
+          if($upload_type == 'profil' && file_exists($dir."avatar.jpg") ) unlink($dir."avatar.jpg");
+          if($upload_type == 'profilkind' && file_exists($dir."avatar_kind.jpg") ) unlink($dir."avatar_kind.jpg");
 
           switch (pathinfo($name, PATHINFO_EXTENSION)) {
               case 'jpg':
@@ -53,9 +54,9 @@
               break;
           }
           if($upload_type == 'profil'){
-          $newone = $dir."profilbild".".jpg";
+          $newone = $dir."avatar".".jpg";
         }else if($upload_type == 'profilkind'){
-            $newone = $dir."kinderbild".".jpg";
+            $newone = $dir."avatar_kind".".jpg";
           }else{
             $newone = $dir.time().Login::checkUser()["user_id"].".jpg";
           }
