@@ -1,4 +1,10 @@
 <?php require_once $_SERVER["DOCUMENT_ROOT"]."/Core/index.php"; $login_user = Login::checkUser(); ?>
+<?php if( !$login_user ) {
+		http_response_code( 302 );
+		header( "Location: /Signin/");
+		return;
+	}
+?>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -46,36 +52,14 @@
 			$(document).ready(function(){
 				$(".modal-trigger").leanModal();
 				
-				var c = $('#submember, #remmember, #grantModbtn, #revokeModbtn'); // upload button
-				
 				try{ initializeUpload("profil")     } catch(e) {}
 				try{ initializeUpload("profilkind") } catch(e) {}
 				try{ initializeUpload("group") } catch(e) {}
-				
-				c.click(function(){
-					var addmem = $('#addmem, #remmem, #grantMod, #revokeMod');
-					var l = $('#loading');
-				// implement with ajaxForm Plugin
-					addmem.ajaxForm({
-					beforeSend: function(){
-						c.attr('disabled', 'disabled');
-						l.fadeIn();
-					},
-					success: function(e){
-						addmem.resetForm();
-						Materialize.toast('Erledigt!', 4000)
-						c.removeAttr('disabled');
-						l.fadeOut();
-				  	},
-					error: function(e){
-						c.removeAttr('disabled');
-						l.fadeOut();
-					}
-					});
-				});
 			});
-
-
+			
+			try {
+				reloadImage();
+			} catch(e){}
 
 		</script>
 	</body>

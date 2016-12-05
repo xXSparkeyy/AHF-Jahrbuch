@@ -69,7 +69,15 @@
  							</div>
  						</ul>
  					</div>
- 				
+ 					<div id="images" class="col s12">
+ 						<ul class='collection with-header'>
+ 							<div align="center">
+							<a  href="#uploadview" class="waves-effect waves-light btn center modal-trigger" style="width: 100%;"><i class="material-icons left">cloud</i>Bilder hochladen</a>
+ 							</div>
+							<div id="gallery">
+							</div>
+ 						</ul>
+ 					</div>
  					<script>
 						 function grantMod( id ) {
 						 	var adb = document.getElementById( "modbutton"+id )
@@ -126,37 +134,22 @@
 						 	}
 						 	x.send();
 						 }
+						 function reloadImage() {
+						 	var g = document.getElementById( "gallery" )
+						 	var x = new XMLHttpRequest()
+						 	x.open( "GET", "/JSON/getimages/" );
+						 	x.onreadystatechange = function() {
+						 		if( x.readyState == 4 && x.status == 200 ) {
+						 			eval( "var img = "+x.responseText )
+									g.innerHTML = "";
+						 			for( var i in img )
+						 			g.innerHTML += '<img onclick="" src="'+img[i]+'" class="materialboxed responsive-img col s6 m4 l2" style="margin:0" alt=""  width="200px" width="200px">';
+						 			$('.materialboxed').materialbox();
+						 		}
+						 	}
+						 	x.send();
+						 }
      				</script>
- 					
- 					<div id="groups" class="col s12">
- 						<ul class='collection with-header'>
- 							<div align="center">
-							<a  href="#uploadview" class="waves-effect waves-light btn center modal-trigger" style="width: 100%;"><i class="material-icons left">cloud</i>Bilder hochladen</a>
- 							</div>
-							<div id="gallery">
-							<?php
-						try{
-							$dir = new DirectoryIterator('../media/img/'.$group->getID());
-							foreach ($dir as $fileinfo) {
-									if (!$fileinfo->isDot()) {
-										$path = '/media/img/';
-										$path .= $group->getID().'/';
-										$path .= $fileinfo->getFilename();
-
-										?>
-											<img src="<?php echo $path ?>" class="materialboxed responsive-img" style="margin:0" alt=""  width="200px" width="200px">
-											<?php
-									}
-							}
-
-						}catch(Exception $e)
-						{
-						}
-
-							?>
-						</div>
- 						</ul>
- 					</div>
 
  			</div>
      </div>
@@ -199,7 +192,7 @@
 </div>
 <div id="uploadview" class="modal bottom-sheet">
     <div class="modal-content">
-      <h4>Profilbild hochladen:</h4>
+      <h4>Bild in die Gruppe hochladen:</h4>
       <?php Upload::showUploadSection('group', $group->getID());?>
 
     </div>

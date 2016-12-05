@@ -4,7 +4,7 @@
     { 
         switch ($code) { 
             case UPLOAD_ERR_INI_SIZE: 
-                $message = "Das Bild ist zu Groß!"; 
+                $message = "Das Bild ist zu Groß! Maximale Größe: ".ini_get("upload_max_filesize"); 
                 break; 
             case UPLOAD_ERR_FORM_SIZE: 
                 $message = "Das Bild ist zu Groß!";
@@ -31,6 +31,10 @@
         } 
         return $message; 
     } 
+    
+    function random_bytes($n) {
+    	$ret = "";for( $i=0;$i<$n;$i++)$ret+=chr(rand(65,90)); return $ret;
+    }
 
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST')
@@ -45,7 +49,7 @@
       }else if(isset($_FILES['profilkind'])){
         $statement = Login::checkUser()["user_id"];
         $upload_type = 'profilkind';
-      }
+      } else {echo codeToMessage(UPLOAD_ERR_NO_FILE); return; }
       if (!file_exists("$r/media-upload/data/$statement")) {
         mkdir("$r/media-upload/data/$statement", 0777, true);
       }
@@ -91,19 +95,17 @@
               break;
           }
           if($upload_type == 'profil'){
-          $newone = $dir."avatar".".jpg";
-        }else if($upload_type == 'profilkind'){
-            $newone = $dir."avatar_kind".".jpg";
-          }else{
-            $newone = $dir.time().Login::checkUser()["user_id"].".jpg";
-          }
+          	$exportpath = $dir."avatar".".jpg";
+          }else if($upload_type == 'profilkind'){
+            $exportpath = $dir."avatar_kind".".jpg";
+          }else if($upload_type == 'group') {
+            $exportpath = $dir.time().".".Login::checkUser()["user_id"].".".random_bytes(5).".jpg";
+          } else continue;
 
-          if( imagejpeg($image, $newone,100) )
-
-            $count++;
+          if( imagejpeg($image, $exportpath,100) ) $count++;
       }
 
-      echo $count." Bild(er) erfolgreich hochgeladen!";
+      echo "$count Bild".($count!=1?"er":"")." erfolgreich hochgeladen!";
 
     }
     
