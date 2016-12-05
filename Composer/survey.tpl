@@ -29,8 +29,9 @@ if( !SURVEYEDIT && Login::isAdmin( $login_user["user_id"] ) ) {
 		echo '<ul><li><a href="javascript:add()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
 			  <a href="javascript:save()" class="btn-floating btn-large waves-effect waves-light orange"><i class="material-icons">save</i></a>
 			  <a href="/Surveys/'.SURVEY.'/" class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">list</i></a><a href="../delete/" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">delete</i></a></li></ul>
-		<input type="hidden" value="'.SURVEY.'" name="survey_id"><input id="muckefuck" type="checkbox" name="visib" '.($s->isPublic()?"checked":"").'><label style="margin-right: 1%" for="muckefuck">Öffentlich</label><div id="questions">';
+		<input type="hidden" value="'.SURVEY.'" name="survey_id"><input id="muckefuck" type="checkbox" name="visib" '.($s->isPublic()?"checked":"").'><label style="margin-right: 1%" for="muckefuck">Öffentlich</label>';
 	}
+	echo '<div id="questions">';
 	foreach( ($s->getQuestions()) as $question ) {
 		$id     = $question["question_id"];
 		$title  = $question["question_title"];
@@ -65,7 +66,7 @@ if( !SURVEYEDIT && Login::isAdmin( $login_user["user_id"] ) ) {
 			}
 			var questions = document.getElementById( "questions" )
 			var o = document.getElementById( r.question ).cloneNode(true)
-			questions.removeChild(document.getElementById( r.question ))
+			document.getElementById( r.question ).remove()
 			for( i = 0; i < questions.children.length; i++ ) {
 				e = questions.children[i]
 				if( e.getElementsByClassName( "votes" )[0].innerText*1 < r.votes*1 ) {

@@ -59,7 +59,7 @@ class Group {
 	public function setMeta( $name, $dsc ) {
 		$db = connectDB();
 		$id = $this->id; $db->query( "UPDATE `group_meta` SET `name`='$name', `description`='$dsc' WHERE `group_id` Like $id" );
-		loadMeta();
+		$this->loadMeta();
 	}
 	public function addMember( $user ) {
 		return Group::_addMember($user,$this->id);
@@ -78,7 +78,7 @@ class Group {
 		return $db->query( "DELETE FROM `group_participants` WHERE `group_id` LIKE '$id' AND `user_id` LIKE '$user'" );
 	}
 
-	public static function removeGroup() {
+	public function removeGroup() {
 		$db = connectDB();
 		$id = $this->id; $db->query( "DELETE FROM `group_meta` WHERE `group_id` Like $id" );
 		$db->query( "DELETE FROM `group_participants` WHERE `group_id` Like $id" );
@@ -103,7 +103,7 @@ class Group {
 	}
 	public static function inGroups($user) {
 		if(!($db = connectDB()) ) return false;
-		if(!($result = $db->query( "SELECT * FROM `group_meta` as a LEFT JOIN `group_participants` as b ON a.`group_id` LIKE b.`group_id` WHERE b.`user_id` LIKE 'LukaNagel99'") ) ) return false;
+		if(!($result = $db->query( "SELECT * FROM `group_meta` as a LEFT JOIN `group_participants` as b ON a.`group_id` LIKE b.`group_id` WHERE b.`user_id` LIKE '$user'") ) ) return false;
 		$ret = []; while(($e = $result->fetch_array(MYSQL_ASSOC))) { $ret[] = $e; }
 		return $ret;
 	}

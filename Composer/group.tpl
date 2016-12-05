@@ -51,18 +51,18 @@
 										</div>';
 								echo "
 								<div id='member$id' class='col s6 m4 l3' style=\"padding: 2%\">
-									<div style=\"position: relative\" class='card-panel grey lighten-5 z-depth-1 group-member'>
-										<div style=\"position: relative\"><a href=\"/profiles/$id/\"><div style=\"background: url($img)\" class=\"avatar circle\"></div></a></div>
+									<a href=\"/profile/$id/\"><div style=\"position: relative\" class='card-panel grey lighten-5 z-depth-1 group-member'>
+										<div style=\"position: relative\"><div style=\"background: url($img)\" class=\"avatar circle\"></div></div>
 										<h4 class=\"center\">$name</h4>
 										$controls
-									</div>
+									</div></a>
 								</div>";
 								}
 								if( Group::isMod(GROUP,$login_user["user_id"]) ) echo '<div id="addmembercard" class="col s6 m4 l3" style="padding: 2%">
-									<div style="position: relative" class="card-panel grey lighten-5 z-depth-1 group-member">
-										<div style="position: relative"><a class="modal-trigger" href="#adduserview"><div style="background: url(/media-upload/data/add.svg)" class="avatar circle"></div></a></div>
+									<a class="modal-trigger" href="#adduserview"><div style="position: relative" class="card-panel grey lighten-5 z-depth-1 group-member">
+										<div style="position: relative"><div style="background: url(/media-upload/data/add.svg)" class="avatar circle"></div></div>
 										<h4 class="center">Benutzer Hinzufügen</h4>
-									</div>
+									</div></a>
 								</div>';
 								?>
 								
@@ -119,7 +119,7 @@
 						 			adb.remove();
 						 			eval( "var m = "+x.responseText )
 									var o = document.createElement('div');
-									o.innerHTML = "<div id='member"+id+"' class='col s6 m4 l3' style=\"padding: 2%\"><div style=\"position: relative\" class='card-panel grey lighten-5 z-depth-1 group-member'><div style=\"position: relative\"><a href=\"/profiles/"+id+"/\"><div style=\"background: url("+m.img+")\" class=\"avatar circle\"></div></a></div><h4 class=\"center\">"+m.name+"</h4><div class=\"controls\"><a id=\"modbutton"+id+"\" href=\"javascript:grantMod('"+id+"')\" class=\"modbutton btn-floating btn-large waves-effect waves-light red left\"><i class=\"material-icons\">star</i></a><a href=\"javascript:kick('"+id+"')\" class=\"btn-floating btn-large waves-effect waves-light red right\"><i class=\"material-icons\">block</i></a></div></div></div>"
+									o.innerHTML = "<div id='member"+id+"' class='col s6 m4 l3' style=\"padding: 2%\"><a href=\"/profile/"+id+"/\"><div style=\"position: relative\" class='card-panel grey lighten-5 z-depth-1 group-member'><div style=\"position: relative\"><div style=\"background: url("+m.img+")\" class=\"avatar circle\"></div></a></div><h4 class=\"center\">"+m.name+"</h4><div class=\"controls\"><a id=\"modbutton"+id+"\" href=\"javascript:grantMod('"+id+"')\" class=\"modbutton btn-floating btn-large waves-effect waves-light red left\"><i class=\"material-icons\">star</i></a><a href=\"javascript:kick('"+id+"')\" class=\"btn-floating btn-large waves-effect waves-light red right\"><i class=\"material-icons\">block</i></div></div></a></div>"
 						 			o = o.firstChild;
 						 			document.getElementById( "memberparent" ).insertBefore(o,document.getElementById( "addmembercard" ))
 						 		}
@@ -160,6 +160,41 @@
 
  			</div>
      </div>
+<?php /*if( Group::isMod(GROUP,$login_user["user_id"])  ) {*/?>
+<?php if( Login::isAdmin($login_user["user_id"])  ) {?>
+	<a class="modal-trigger waves-effect waves-light btn" href="#editgroup">Edit group</a>
+
+  <div id="editgroup" class="modal">
+	<div class="modal-content">
+	  <form id="editform" method="POST" action="/group/setValues.php"><h4>Create new Group</h4>
+	  <div class="input-field col s12"><input id="cfn" type="text" value="<?php echo $group->getName(); ?>" name="name"><label for="cfn">Name der Gruppe</label></div>
+	  <div class="input-field col s12"><input id="cfd" type="text" value="<?php echo $group->getDescription(); ?>" name="desc"><label for="cfd">Beschreibung</label></div>
+	  <input type="hidden" name="changegroup" value="true">
+	  <input type="hidden" name="group" value="<?php echo GROUP; ?>">
+	  </form>
+	</div>
+	<div class="modal-footer">
+	  <a href="javascript:$('#editform').submit()" class="modal-action waves-effect waves-green btn-flat ">Edit</a>
+	  <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat ">Cancel</a>
+	</div>
+  </div>
+  <?php } ?>
+<?php if( Login::isAdmin($login_user["user_id"])  ) {?>
+	<a class="modal-trigger waves-effect waves-light btn" href="#deletegroup">Delete group</a>
+
+  <div id="deletegroup" class="modal">
+	<div class="modal-content">
+	  <form id="deleteform" method="POST" action="/group/setValues.php"><h4>Are you sure?</h4>
+	  <input type="hidden" name="deletegroup" value="true">
+	  <input type="hidden" name="group" value="<?php echo GROUP; ?>">
+	  </form>
+	</div>
+	<div class="modal-footer">
+	  <a href="javascript:$('#deleteform').submit()" class="modal-action waves-effect waves-green btn-flat ">Delete</a>
+	  <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat ">Cancel</a>
+	</div>
+  </div>
+  <?php } ?>
 </div>
 </div>
 <div id="uploadview" class="modal bottom-sheet">
