@@ -9,7 +9,7 @@
 <h5 class="center s12 l8 offset-l2">- <?php if( SURVEYEDIT ) echo "<input type='text' name='desc'  value='".$s->getDescription()."'>"; else echo $s->getDescription(); ?> -</h5>
 <?php
 if( !SURVEYEDIT && Login::isAdmin( $login_user["user_id"] ) ) {
-		echo '<ul><li><a href="delete/" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">delete</i></a>
+		echo '<ul><li><a href="#deletegroup" class="modal-trigger btn-floating btn-large waves-effect waves-light red"><i class="material-icons">delete</i></a>
 			  <a href="edit/" class="btn-floating btn-large waves-effect waves-light orange"><i class="material-icons">edit</i></a></li></ul>';
 	}
 ?>
@@ -44,6 +44,22 @@ if( !SURVEYEDIT && Login::isAdmin( $login_user["user_id"] ) ) {
 	}
 	if( SURVEYEDIT ) echo "</div></form>";
 ?>
+<?php if( Login::isAdmin($login_user["user_id"])  ) {?>
+	<a class="modal-trigger waves-effect waves-light btn" href="#deletegroup">Delete group</a>
+
+  <div id="deletegroup" class="modal">
+	<div class="modal-content">
+	  <form id="deleteform" method="POST" action="/group/setValues.php"><h4>Are you sure?</h4>
+	  <input type="hidden" name="deletegroup" value="true">
+	  <input type="hidden" name="group" value="<?php echo GROUP; ?>">
+	  </form>
+	</div>
+	<div class="modal-footer">
+	  <a href="delete/" class="modal-action waves-effect waves-green btn-flat ">Delete</a>
+	  <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat ">Cancel</a>
+	</div>
+  </div>
+  <?php } ?>
 </div>
 <script>
 	function vote( question, value ) {
