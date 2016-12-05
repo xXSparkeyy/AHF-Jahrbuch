@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `group_meta` (
   `name` tinytext NOT NULL,
   `description` text NOT NULL,
   PRIMARY KEY (`group_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci' AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci' AUTO_INCREMENT=6 ;
 
 DROP TABLE IF EXISTS `group_participants`;
 CREATE TABLE IF NOT EXISTS `group_participants` (
@@ -24,29 +24,7 @@ CREATE TABLE IF NOT EXISTS `group_participants` (
   `user_id` text NOT NULL,
   `mod` tinyint(1) NOT NULL,
   PRIMARY KEY (`group_participants_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci' AUTO_INCREMENT=10 ;
-
-DROP TABLE IF EXISTS `image_galleries`;
-CREATE TABLE IF NOT EXISTS `image_galleries` (
-  `gallery_id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` text NOT NULL,
-  PRIMARY KEY (`gallery_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci' AUTO_INCREMENT=1 ;
-
-DROP TABLE IF EXISTS `images_linking`;
-CREATE TABLE IF NOT EXISTS `images_linking` (
-  `images_linking_id` int(11) NOT NULL AUTO_INCREMENT,
-  `image_id` int(11) NOT NULL,
-  `gallery_id` int(11) NOT NULL,
-  PRIMARY KEY (`images_linking_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci' AUTO_INCREMENT=1 ;
-
-DROP TABLE IF EXISTS `images_path`;
-CREATE TABLE IF NOT EXISTS `images_path` (
-  `image_id` int(11) NOT NULL AUTO_INCREMENT,
-  `path` text NOT NULL,
-  PRIMARY KEY (`image_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci' AUTO_INCREMENT=43 ;
 
 DROP TABLE IF EXISTS `log`;
 CREATE TABLE IF NOT EXISTS `log` (
@@ -55,14 +33,14 @@ CREATE TABLE IF NOT EXISTS `log` (
   `content` text NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`log_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci' AUTO_INCREMENT=60 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci' AUTO_INCREMENT=141 ;
 
 DROP TABLE IF EXISTS `login_admin`;
 CREATE TABLE IF NOT EXISTS `login_admin` (
   `uselesscol` int(11) NOT NULL AUTO_INCREMENT,
   `login_admin_id` text NOT NULL,
   PRIMARY KEY (`uselesscol`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci' AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci' AUTO_INCREMENT=10 ;
 
 DROP TABLE IF EXISTS `login_info`;
 CREATE TABLE IF NOT EXISTS `login_info` (
@@ -75,6 +53,14 @@ CREATE TABLE IF NOT EXISTS `login_tokens` (
   `user_id` text NOT NULL,
   `token` text NOT NULL,
   `expires` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci';
+
+DROP TABLE IF EXISTS `profiles`;
+CREATE TABLE IF NOT EXISTS `profiles` (
+  `user_id` text NOT NULL,
+  `FName` text NOT NULL,
+  `LName` text NOT NULL,
+  `avatar` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci';
 
 DROP TABLE IF EXISTS `profile_meta_fields`;
@@ -96,14 +82,6 @@ CREATE TABLE IF NOT EXISTS `profile_user_fields` (
   PRIMARY KEY (`uf_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci' AUTO_INCREMENT=23 ;
 
-DROP TABLE IF EXISTS `profiles`;
-CREATE TABLE IF NOT EXISTS `profiles` (
-  `user_id` text NOT NULL,
-  `FName` text NOT NULL,
-  `LName` text NOT NULL,
-  `avatar` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci';
-
 DROP TABLE IF EXISTS `survey_meta`;
 CREATE TABLE IF NOT EXISTS `survey_meta` (
   `survey_meta_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -111,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `survey_meta` (
   `survey_description` text NOT NULL,
   `survey_visible` smallint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`survey_meta_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci' AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci' AUTO_INCREMENT=8 ;
 
 DROP TABLE IF EXISTS `survey_questions`;
 CREATE TABLE IF NOT EXISTS `survey_questions` (
@@ -129,7 +107,7 @@ CREATE TABLE IF NOT EXISTS `survey_votes` (
   `vote_question` int(11) NOT NULL,
   `survey__id` int(11) NOT NULL,
   PRIMARY KEY (`vote_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci' AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='latin1_swedish_ci' AUTO_INCREMENT=8 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
