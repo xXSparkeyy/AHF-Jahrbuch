@@ -41,9 +41,9 @@ class Login {
 	//#
 	//#######
 	function validateHash( $username, $password ) {
-		$db = connectDB();
+		$db = new DB();
 		if( !$db ) return [ "status"=>LOGIN_SQL_ERROR, "user"=>"" ];
-		if( !($result = $db->query("Select `id`, `password` FROM `login_info` WHERE `id` Like '$username'") ) ) return [ "status"=>LOGIN_SQL_ERROR, "user"=>" " ];
+		if( !($result = $db->query("Select `id`, `password` FROM `login_info` WHERE `id` Like '§0'",[$username]) ) ) return [ "status"=>LOGIN_SQL_ERROR, "user"=>" " ];
 		if( $result->num_rows == 0 ) return [ "status"=>LOGIN_HASH_VALIDATION_ERROR, "user"=>"" ];
 		$user = $result->fetch_array(MYSQL_ASSOC);
 		if( password_verify( $password, $user["password"] ) ) return [ "status"=>LOGIN_HASH_VALIDATION_OK, "user"=>$user["id"] ];
@@ -55,10 +55,10 @@ class Login {
 	//#
 	//#######
 	function createToken( $user_id ) {
-		if( !($db = connectDB() ) ) return ["status"=>LOGIN_SQL_ERROR,"value"=>""];
+		if( !($db = new DB() ) ) return ["status"=>LOGIN_SQL_ERROR,"value"=>""];
 		$token = md5( rand() );
 		while( $this->checkToken( $token !== False ) ) $token = md5( rand() );
-		if(!$db->query( "INSERT INTO `login_tokens` ( user_id, token, expires ) VALUES ( '$user_id', '$token', DATE_ADD(NOW(), INTERVAL 5 MINUTE) )" ) ) return ["status"=>LOGIN_SQL_ERROR,"value"=>""];
+		if(!$db->query( "INSERT INTO `login_tokens` ( user_id, token, expires ) VALUES ( '§0', '§1', DATE_ADD(NOW(), INTERVAL 5 MINUTE) )",[$user_id,$token] ) ) return ["status"=>LOGIN_SQL_ERROR,"value"=>""];
 		return ["status"=>LOGIN_TOKEN_OK,"value"=>$token];
 	}
 	//#######
@@ -67,8 +67,8 @@ class Login {
 	//#
 	//#######
 	function checkToken( $token ) {
-		if( !($db = connectDB() ) ) return False;
-		if(!($result = $db->query( "SELECT * FROM `login_tokens` WHERE `token` Like '$token'" ) ) ) return False;
+		if( !($db = new DB() ) ) return False;
+		if(!($result = $db->query( "SELECT * FROM `login_tokens` WHERE `token` Like '§0'",[$token] ) ) ) return False;
 		if( $result->num_rows == 0 ) return False;
 		$result = $result->fetch_array(MYSQL_ASSOC);
 		if( strtotime( $result["expires"] ) < strtotime( "now" ) ) {
@@ -83,8 +83,8 @@ class Login {
 	//#
 	//#######
 	function deleteToken( $token ) {
-		if( !($db = connectDB() ) ) return False;
-		if(!$db->query( "DELETE FROM `login_tokens` WHERE `token` Like '$token' " ) ) return False;
+		if( !($db = new DB() ) ) return False;
+		if(!$db->query( "DELETE FROM `login_tokens` WHERE `token` Like '§0' ",[$token] ) ) return False;
 		return True;
 	}
 	//#######
@@ -93,8 +93,8 @@ class Login {
 	//#
 	//#######
 	function refreshToken( $token ) {
-		if( !($db = connectDB() ) ) return False;
-		if(!($result = $db->query( "SELECT `user_id`, `token` FROM `login_tokens` WHERE `token` Like '$token'" ) ) ) return False;
+		if( !($db = new DB() ) ) return False;
+		if(!($result = $db->query( "SELECT `user_id`, `token` FROM `login_tokens` WHERE `token` Like '§0'",[$token] ) ) ) return False;
 		if(!($t = $this->createToken( $result->fetch_array(MYSQLI_ASSOC)["user_id"] ))) return False;
 		if(!$this->deleteToken( $token )) return False;
 		setCookie( "login", $t["value"], time()+365*24*60*60, "/" );
@@ -116,8 +116,8 @@ class Login {
 	//#
 	//#######
 	function clearTokens( $user_id ) {
-		if( !($db = connectDB() ) ) return False;
-		if(!$db->query( "DELETE FROM `login_tokens` WHERE `user_id` Like '$user_id' " ) ) return False;
+		if( !($db = new DB() ) ) return False;
+		if(!$db->query( "DELETE FROM `login_tokens` WHERE `user_id` Like '§0' ", [$user_id] ) ) return False;
 		return True;
 	}
 	//#######
@@ -126,8 +126,8 @@ class Login {
 	//#
 	//#######
 	function clearOldTokens($user_id) {
-		if( !($db = connectDB() ) ) return False;
-		if(!$db->query( "DELETE FROM `login_tokens` WHERE `user_id` Like '$user_id' AND `expires` < NOW() " ) ) return False;
+		if( !($db = new DB() ) ) return False;
+		if(!$db->query( "DELETE FROM `login_tokens` WHERE `user_id` Like '§0' AND `expires` < NOW() ", [$user_id] ) ) return False;
 		return True;
 	}
 	//#######
@@ -177,8 +177,8 @@ class Login {
 	//#
 	//#######
 	public static function isAdmin( $user ) {
-		if(!($db = connectDB()) ) return false;
-		if(!($result = $db->query( "SELECT * FROM `login_admin` WHERE `login_admin_id` Like '$user' ") ) ) return false;
+		if(!($db = new DB()) ) return false;
+		if(!($result = $db->query( "SELECT * FROM `login_admin` WHERE `login_admin_id` Like '§0' ",[$user]) ) ) return false;
 		return $result->num_rows > 0;
 	}
 	//#######
@@ -188,9 +188,9 @@ class Login {
 	//#######
 	public static function grantAdmin( $user, $usr ) {
 		if( Login::isAdmin( $usr ) ) {
-			if(!($db = connectDB()) ) return false;
-			if(!($result = $db->query( "DELETE FROM `login_admin` WHERE `login_admin_id` LIKE '$user'    ") ) ) return false;
-			if(!($result = $db->query( "INSERT INTO `login_admin` ( `login_admin_id` ) VALUES ( '$user' )") ) ) return false;
+			if(!($db = new DB()) ) return false;
+			if(!($result = $db->query( "DELETE FROM `login_admin` WHERE `login_admin_id` LIKE '§0'",[$user]) ) ) return false;
+			if(!($result = $db->query( "INSERT INTO `login_admin` ( `login_admin_id` ) VALUES ( '§0' )",[$user]) ) ) return false;
 			Log::msg( "Privileges", "$usr granted $user admin rights" );
 			return Login::isAdmin( $user );
 		}
@@ -202,8 +202,8 @@ class Login {
 	//#######
 	public static function revokeAdmin( $user, $usr) {
 		if( Login::isAdmin( $usr ) ) {
-			if(!($db = connectDB()) ) return false;
-			if(!($result = $db->query( "DELETE FROM `login_admin` WHERE `login_admin_id` LIKE '$user'") ) ) return false;
+			if(!($db = new DB()) ) return false;
+			if(!($result = $db->query( "DELETE FROM `login_admin` WHERE `login_admin_id` LIKE '§0'",[$user]) ) ) return false;
 			Log::msg( "Privileges", "$usr revoked $user admin rights" );
 			return Login::isAdmin( $user );
 		}
