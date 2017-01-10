@@ -1,18 +1,33 @@
-<?php
-	if( isset($_GET["debug"]) ) ini_set( "display_errors", "1" );
+<?php require_once( "ngit_sqlcreds.php" );
+	if( isset($_COOKIE["debug"]) ) ini_set( "display_errors", "1" );
 	else ini_set( "display_errors", "0" );
-	function connectDB($tb = 'DB2787277') {
-		$db = new mysqli('rdbms.strato.de', 'U2787277', 'Berlingo1998', $tb);
-		if( $db->connect_errno ) {
-			error_log( $db->connect_error );
-			return False;
+	
+	
+	
+	class DB extends mysqli {
+		
+		function connect() {
+			parent::connect(YB_HOST, YB_USER, YB_PASSWD, YB_TABLE);
+			if( $db->connect_errno ) {
+				error_log( $db->connect_error );
+				return False;
+			}
+			return true;
 		}
-		$result = $db->query("SET SQL_BIG_SELECTS=1");
-		return $db;
-	}
-	function matchedRows( $mysqli ) {
-		preg_match_all ('/(\S[^:]+): (\d+)/', $mysqli->info, $matches); 
-    	$info = array_combine ($matches[1], $matches[2]);
-    	return $info["Rows matched"];
+		function matchedRows() {
+			preg_match_all ('/(\S[^:]+): (\d+)/', $this->info, $matches); 
+			$info = array_combine ($matches[1], $matches[2]);
+			return $info["Rows matched"];
+		}
+		
+		public function query( $query, $params=[] ) {
+				for($i=0;$i<count($params);$i++) {
+					$query = str_replace( "§$i", $this->real_escape_string($params[$i]), $query );
+				}
+				return parent::query( $query );
+		}
+		function DB() {
+			$this->connect();
+		}
 	}
 ?>

@@ -108,12 +108,14 @@ class Registration {
 	//#
 	//#######
 	protected function writeEntry( $nm, $pw, $fn, $ln ) {
-		$db = connectDB();
+		$pw = password_hash($pw, PASSWORD_DEFAULT);
+		$db = new DB();
 		if( !$db ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
-		if(!($result = $db->query( "SELECT `id` FROM `login_info` WHERE `id` Like '$nm'" ) ) ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
+		if(!($result = $db->query( "SELECT `id` FROM `login_info` WHERE `id` Like '§0'",[$nm] ) ) ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
 		if( $result->num_rows > 0 ) return REGISTRATION_USER_EXISTS;
-		if(!($result = $db->query( "INSERT INTO `login_info` ( id, password ) VALUES ( '$nm', '$pw' )" ) ) )   {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
-		if(!($result = $db->query( "INSERT INTO `profiles` ( user_id, fname, lname ) VALUES ( '$nm', '$fn', '$ln' )" ) ) ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
+		if(!($result = $db->query( "INSERT INTO `login_info` ( id, password ) VALUES ( '§0', '§1' )",[$nm,$pw] ) ) )   {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
+		if(!($result = $db->query( "SELECT `user_id` FROM `profiles` WHERE `user_id` Like '§0'",[$nm] ) ) ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
+		if( $result->num_rows == 0 ) if(!($result = $db->query( "INSERT INTO `profiles` ( user_id, fname, lname ) VALUES ( '§0', '§1', '§2' )",[$nm,$fn,$ln] ) ) ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
 		return REGISTRATION_SUCCESSFULL;
 	}
 	
@@ -133,15 +135,12 @@ class Registration {
 			$this->error = $moodleData["status"];
 			return false;
 		}
-		$password = md5( $password );
 		$status = $this->writeEntry( $username, $password, $moodleData["name"][0], $moodleData["name"][1] );
 		if( $status != REGISTRATION_SUCCESSFULL ) {
 			$this->error = $status;
 			return false;
 		}
-		$l = new Login( md5( $username.$password.$_SERVER['REQUEST_TIME'] ) );
-		$this->error = false;
-		return $l;
+		return true;
 	}
 	
 }
