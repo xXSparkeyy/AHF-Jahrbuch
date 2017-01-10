@@ -5,24 +5,29 @@
 <br><br><br><br><br>
 <div class="container">
 	<div class="row">
-		<div class="col s10 offset-s2 m4 offset-m4">
+		<div class="col s10 offset-s1 m8 offset-m2 l6 offset-l3">
 			<div class="card-panel grey lighten-5 z-depth-1" style="position: relative">
-				<?php if(PROFILEUSR == Login::checkUser()["user_id"]) echo '<a href="./edit" class="btn-floating btn-large waves-effect waves-light red right" style="position: absolute; top: -9%; right: -9%"><i class="material-icons">edit</i></a>' ?>
-				<img src="https://cdn3.iconfinder.com/data/icons/avatar-set/512/Avatar02-512.png" alt="" class="circle responsive-img">
-				<h4 class="center"><?php if( !PROFILEEDIT ) echo $p->getFirstName()." ".$p->getLastName();
-										 else echo "<input name='firstname' value='".$p->getFirstName()."' /><input name='lastname' value='".$p->getLastName()."' />";?></h4>
-			</div>
+				<?php if(Login::isAdmin( $login_user["user_id"]) && !PROFILEEDIT ) echo '<a id="adminbutton" href="javascript:'.(Login::isAdmin(PROFILEUSR)?"revokeAdmin()\" enabled ":"grantAdmin()\"").' class="btn-floating btn-large waves-effect waves-light red right" style="position: absolute; top: -9%; right: -9%"><i class="material-icons">star</i></a>' ?>
+				<?php if(PROFILEUSR == $login_user["user_id"] && !PROFILEEDIT ) echo '<a href="./edit" class="btn-floating btn-large waves-effect waves-light red right" style="position: absolute; top: -9%; right: -9%"><i class="material-icons">edit</i></a>' ?>
+				<ul class="tabs" style="margin-bottom:5px;">
+					<li class="tab col s6"><a href="#profilbild">Profil-</a></li>
+					<li class="tab col s6"><a href="#kinderbild">Kinderbild</a></li>
+				</ul>
+				<div id="profilbild" style="position: relative"><a <?php if( PROFILEUSR == $login_user["user_id"] ) echo 'href="#uploadview" class="modal-trigger"';?>><div id="avatar" src="<?php echo $p->getAvatar(); ?>" style="background: url(<?php echo $p->getAvatar(); ?>)" alt="" class="avatar circle responsive-img"></div><?php if( PROFILEUSR == $login_user["user_id"] ) echo '<i style="position: absolute; bottom: 1%; right: 1%; font-size: 300%" class="material-icons">backup</i>';?></a></div>
+				<div id="kinderbild" style="position: relative"><a <?php if( PROFILEUSR == $login_user["user_id"] ) echo 'href="#uploadviewkind" class="modal-trigger"';?>><div id="subavatar" src="<?php echo $p->getAvatar('_kind'); ?>" style="background: url(<?php echo $p->getAvatar('_kind'); ?>)" alt="" class="avatar circle responsive-img"></div><?php if( PROFILEUSR == $login_user["user_id"] ) echo '<i style="position: absolute; bottom: 1%; right: 1%; font-size: 300%" class="material-icons">backup</i>';?></a></div>
+				<br><h4 class="center"><?php if( !PROFILEEDIT ) echo $p->getFirstName()." ".$p->getLastName();
+										 else echo "<input name='firstname' value='".$p->getFirstName()."' /><input name='lastname' value='".$p->getLastName()."' />";?></h4></div>
 		</div>
      </div>
-     <?php
+    <?php
      	$fields = $p->getFields();
      	foreach( $fields as $field ) {
      		$title = $field["field_title"];
      		$value = $field["value"];
      		echo'
-			 	<div class="row">
+			 	<div class="row row_profil">
 					<div class="col s6">
-						<p class="right">'.$title.'</p>
+						<p class="right green-text">'.$title.'</p>
 					</div>
 				<div class="col s6">';
 		if( PROFILEEDIT ) {
@@ -38,14 +43,96 @@
 				case  1: echo '<p class="left">'.$value.'</p>'; break;
 				case  2: echo '<p class="left">'; echo $field["value"]; echo "</p>"; break;
 				case  3: echo '<p class="left">'; foreach( explode( "|", $field["value"] ) as $str ) echo '<div class="chip">'.$str.'</div>'; echo '</p>'; break;
-				case  4: echo '<p class="left">'.$value.'</p>'; break;
+				case  4: echo '<p class="left">'.preg_replace('/[\n\r]/',"<br>",$value).'</p>'; break;
 				default: break;
 			}
-			
+
      	}
      	echo '</div></div>';
      	}
-     	if( PROFILEEDIT ) echo '<br><br><div class="row"><input type="submit" value="Speichern" id="loginbutton" class="waves-effect waves-light btn green col s12 m4 offset-m4"></input></div></form><br><br>';
-     
+     	if( PROFILEEDIT ) echo '<br><br>
+     	<div class="row" onclick="document.forms[0].submit()">
+     		<input type="submit" value="Speichern" id="loginbutton" class="waves-effect waves-light btn green col s12 m4 offset-m4">
+     	</div>
+     	</form>
+     	<br><br>';
+
      ?>
+     <div class="row">
+     <h2>Gruppen</h2>
+     	<?php
+     	foreach(Group::inGroups(PROFILEUSR) as $group ) {
+     		$name = $group["name"];
+			$lnk = "/group/".$group["group_id"]."/";
+			echo "
+			<a href='$lnk' class='col s6 m3' style=\"padding: 2%\">
+				<div class='card-panel grey lighten-5 z-depth-1'>
+					<h4 class=\"center\">$name</h4>
+				</div>
+			</a>";
+		}
+		?>
+     </div>
+     <div id="uploadview" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Profilbild hochladen:</h4>
+      <?php Upload::showUploadSection('profil');?>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Abbrechen</a>
+    </div>
+  </div>
+  <div id="uploadviewkind" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Profilbild hochladen:</h4>
+      <?php Upload::showUploadSection('profilkind');?>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Abbrechen</a>
+    </div>
+  </div>
+     <script>
+  	function reloadImage() {
+  		tmp = document.getElementById( "avatar" ).getAttribute("src");
+  		document.getElementById( "avatar" ).style.background = "";
+  		document.getElementById( "avatar" ).style.background = "url("+tmp+"?nocache="+(new Date().getTime())+")";
+  		tmp = document.getElementById( "subavatar" ).getAttribute("src");
+  		document.getElementById( "subavatar" ).style.background = "";
+  		document.getElementById( "subavatar" ).style.background = "url("+tmp+"?nocache="+(new Date().getTime())+")";
+  	}
+     function grantAdmin() {
+     	var adb = document.getElementById( "adminbutton" )
+     	var x = new XMLHttpRequest()
+     	x.open( "GET", "/JSON/grantadmin/?user=<?php echo PROFILEUSR; ?>"  );
+     	x.onreadystatechange = function() {
+     		if( x.readyState == 4 && x.status == 200 ) {
+     			var a = eval(x.responseText);
+     			if( a ) { adb.href="javascript:revokeAdmin()"; adb.setAttribute("enabled","") }
+     			else    { adb.href="javascript:grantAdmin()";  adb.removeAttribute("enabled") }
+     		}
+     	}
+     	x.send();
+     }
+     function revokeAdmin() {
+     	var adb = document.getElementById( "adminbutton" )
+     	var x = new XMLHttpRequest()
+     	x.open( "GET", "/JSON/revokeadmin/?user=<?php echo PROFILEUSR; ?>" );
+     	x.onreadystatechange = function() {
+     		if( x.readyState == 4 && x.status == 200 ) {
+     			var a = eval(x.responseText);
+     			if( a ) { adb.href="javascript:revokeAdmin()"; adb.setAttribute("enabled","") }
+     			else    { adb.href="javascript:grantAdmin()";  adb.removeAttribute("enabled") }
+     		}
+     	}
+     	x.send();
+     }
+     </script>
+     <style>
+     	#adminbutton {
+     		background: grey !important;
+     	}
+     	#adminbutton[enabled] {
+     		background: #ffeb3b !important;
+     	}
+     </style>
 </div>

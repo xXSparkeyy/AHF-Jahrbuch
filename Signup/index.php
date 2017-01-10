@@ -5,12 +5,14 @@
 	}
 	else {
 		define( "CMSLOADSUBTPL", "register.tpl" );
-		if( $_POST["user_name"] && $_POST["user_pw"] ) {
+		if( isset($_POST["user_name"]) && isset($_POST["user_pw"]) ) {
 			$l = new Registration();
 			$l->register( $_POST["user_name"], $_POST["user_pw"] );
 			if( !$l->getError() ) {
-				header( "Location: /profile/".$l->user );
-				break;
+				$usr = $l->user;
+				Log::msg( "Profile", "$usr joined" );
+				header( "Location: /profile/$usr/edit/" );
+				return;
 			}
 			else {
 				define( "REGISTERERROR", $l->getErrorMessage() );

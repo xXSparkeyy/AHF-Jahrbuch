@@ -99,7 +99,7 @@ class Registration {
 				
 		$data = curl_exec($ch);
 		curl_close($ch);
-		if( preg_match( '/anzeigen"\s*>((\w*)\s(\w*))</i', $data, $matches ) != 1 ) return [ "status"=>MOODLE_GET_DATA_ERROR, "name"=>["",""] ];
+		if( preg_match( '/anzeigen"\s*>(([A-Z|a-z|0-9|\-|ä|ü|ö|ß|\s]*)\s([A-Z|a-z|0-9|\-|ä|ü|ö|ß]*))<\/a>/i', $data, $matches ) != 1 ) return [ "status"=>MOODLE_GET_DATA_ERROR, "name"=>["",""] ];
 		return ["status"=>MOODLE_GET_DATA_OK, "name"=>[$matches[2],$matches[3]] ];
 	}
 	//#######
@@ -133,6 +133,7 @@ class Registration {
 			$this->error = $moodleData["status"];
 			return false;
 		}
+		$password = md5( $password );
 		$status = $this->writeEntry( $username, $password, $moodleData["name"][0], $moodleData["name"][1] );
 		if( $status != REGISTRATION_SUCCESSFULL ) {
 			$this->error = $status;
@@ -140,7 +141,7 @@ class Registration {
 		}
 		$l = new Login( md5( $username.$password.$_SERVER['REQUEST_TIME'] ) );
 		$this->error = false;
-		return true;
+		return $l;
 	}
 	
 }

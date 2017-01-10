@@ -1,7 +1,6 @@
 <?php require_once( "db.php" );
 
 
-
 define( "LOGIN_HASH_VALIDATION_OK",    0 );
 define( "LOGIN_HASH_VALIDATION_ERROR", 1 );
 define( "LOGIN_TOKEN_OK",              2 );
@@ -43,9 +42,10 @@ class Login {
 	//#######
 	function validateHash( $login_hash ) {
 		$db = connectDB();
-		$t = $_SERVER['REQUEST_TIME'];
+		$t = round($_SERVER['REQUEST_TIME']/100);
 		if( !$db ) return [ "status"=>LOGIN_SQL_ERROR, "user"=>"" ];
-		if( !($result = $db->query("Select `id`, `password` FROM `login_info` WHERE MD5(CONCAT(CONCAT(`id`,`password`),".$t.")) Like '$login_hash'") ) ) return [ "status"=>LOGIN_SQL_ERROR, "user"=>" " ];
+		error_log( "Select `id`, `password` FROM `login_info` WHERE CONCAT(`id`,`password`) Like '$login_hash'" );
+		if( !($result = $db->query("Select `id`, `password` FROM `login_info` WHERE CONCAT(`id`,`password`) Like '$login_hash'") ) ) return [ "status"=>LOGIN_SQL_ERROR, "user"=>" " ];
 		if( $result->num_rows == 0 ) return [ "status"=>LOGIN_HASH_VALIDATION_ERROR, "user"=>"" ];
 		$user = $result->fetch_array(MYSQL_ASSOC);
 		return [ "status"=>LOGIN_HASH_VALIDATION_OK, "user"=>$user["id"] ];
@@ -96,7 +96,7 @@ class Login {
 	function refreshToken( $token ) {
 		if( !($db = connectDB() ) ) return False;
 		if(!($result = $db->query( "SELECT `user_id`, `token` FROM `login_tokens` WHERE `token` Like '$token'" ) ) ) return False;
-		if(!($t = $this->createToken( $result->fetch_array(MYSQL_ASSOC)["user_id"] ))) return False;
+		if(!($t = $this->createToken( $result->fetch_array(MYSQLI_ASSOC)["user_id"] ))) return False;
 		if(!$this->deleteToken( $token )) return False;
 		setCookie( "login", $t["value"], time()+365*24*60*60, "/" );
 		return $t["value"];
@@ -178,7 +178,7 @@ class Login {
 	//#
 	//#######
 	public static function isAdmin( $user ) {
-		if(!($db = connectDB()) ) {$this->error=LOGIN_MYSQL_ERROR;return false;}
+		if(!($db = connectDB()) ) return false;
 		if(!($result = $db->query( "SELECT * FROM `login_admin` WHERE `login_admin_id` Like '$user' ") ) ) return false;
 		return $result->num_rows > 0;
 	}
@@ -187,11 +187,13 @@ class Login {
 	//#	    Grants admin rights to User by user id
 	//#
 	//#######
-	public static function grantAdmin( $user ) {
-		if( Login::isAdmin( $user ) ) {
-			if(!($db = connectDB()) ) {$this->error=LOGIN_MYSQL_ERROR;return false;}
+	public static function grantAdmin( $user, $usr ) {
+		if( Login::isAdmin( $usr ) ) {
+			if(!($db = connectDB()) ) return false;
+			if(!($result = $db->query( "DELETE FROM `login_admin` WHERE `login_admin_id` LIKE '$user'    ") ) ) return false;
 			if(!($result = $db->query( "INSERT INTO `login_admin` ( `login_admin_id` ) VALUES ( '$user' )") ) ) return false;
-			return $result->num_rows > 0;
+			Log::msg( "Privileges", "$usr granted $user admin rights" );
+			return Login::isAdmin( $user );
 		}
 	}
 	//#######
@@ -199,11 +201,12 @@ class Login {
 	//#	    Revokes admin rights to User by user id
 	//#
 	//#######
-	public static function revokeAdmin() {
-		if( Login::isAdmin( $user ) ) {
-			if(!($db = connectDB()) ) {$this->error=LOGIN_MYSQL_ERROR;return false;}
-			if(!($result = $db->query( "DELETE FROM `login_admin` WHERE `login_admin_id` LIKE '$user' )") ) ) return false;
-			return $result->num_rows > 0;
+	public static function revokeAdmin( $user, $usr) {
+		if( Login::isAdmin( $usr ) ) {
+			if(!($db = connectDB()) ) return false;
+			if(!($result = $db->query( "DELETE FROM `login_admin` WHERE `login_admin_id` LIKE '$user'") ) ) return false;
+			Log::msg( "Privileges", "$usr revoked $user admin rights" );
+			return Login::isAdmin( $user );
 		}
 	}
 	
