@@ -41,8 +41,8 @@
 		}
 
 		protected function loadBasicInfo( ) {
-			if(!($db = connectDB()) ) return false;
-			$id = $this->id; if(!($result = $db->query("SELECT `FName`, `LName` FROM `profiles` WHERE `user_id` Like '$id'") ) ) return false;
+			if(!($db = new DB()) ) return false;
+			$id = $this->id; if(!($result = $db->query("SELECT `FName`, `LName` FROM `profiles` WHERE `user_id` Like '§0'",[$id]) ) ) return false;
 			if( $result->num_rows == 0 )  return false;
 			$ret = $result->fetch_array(MYSQL_ASSOC);
 			$this->first_name = $ret["FName"];
@@ -51,8 +51,8 @@
 		}
 
 		protected function loadFields() {
-			if(!($db = connectDB()) ) return false;
-			$id = $this->id;if(!($result = $db->query("SELECT `field_id`, `field_title`, `value`, `field_type`, `field_opt` FROM `profile_meta_fields` LEFT JOIN (SELECT * FROM `profile_user_fields` WHERE `user_id` Like '$id') as `values` ON `field_id` Like `meta_field_id` ORDER BY `field_order`") ) ) return false;
+			if(!($db = new DB()) ) return false;
+			$id = $this->id;if(!($result = $db->query("SELECT `field_id`, `field_title`, `value`, `field_type`, `field_opt` FROM `profile_meta_fields` LEFT JOIN (SELECT * FROM `profile_user_fields` WHERE `user_id` Like '§0') as `values` ON `field_id` Like `meta_field_id` ORDER BY `field_order`",[$id]) ) ) return false;
 			if( $result->num_rows == 0 )  return false;
 			$ret = []; while(($e = $result->fetch_array(MYSQL_ASSOC))) { $ret[] = $e; }
 			$this->fields = $ret;
@@ -60,24 +60,24 @@
 		}
 
 		public function changeInfo( $fname, $lname ) {
-			if(!($db = connectDB()) ) return false;
+			if(!($db = new DB()) ) return false;
 			$usr_id = $this->id;
-			if(!$db->query("UPDATE `profiles` SET `FName`='$fname',`LName`='$lname' WHERE `user_id` Like '$usr_id'") ) return false;
-			if( matchedRows($db) == 0 ) if(!$db->query("INSERT INTO `profile` (`user_id`,`FName`,`LName`) VALUES ('$usr_id','$fname', '$lname')") ) return false;
+			if(!$db->query("UPDATE `profiles` SET `FName`='§0',`LName`='§1' WHERE `user_id` Like '§2'",[$fname,$lname,$usr_id]) ) return false;
+			if( $db->matchedRows($db) == 0 ) if(!$db->query("INSERT INTO `profile` (`user_id`,`FName`,`LName`) VALUES ('§2','§0', '§1')",[$fname,$lname,$usr_id]) ) return false;
 			$this->loadBasicInfo();
 			return true;
 		}
 
 		public function changeField( $field_id, $value ) {
-			if(!($db = connectDB()) ) return false;
+			if(!($db = new DB()) ) return false;
 			$usr_id = $this->id;
-			if(!$db->query("UPDATE `profile_user_fields` SET `value`='$value',`user_id`='$usr_id' WHERE `meta_field_id` Like '$field_id' AND `user_id` Like '$usr_id'")) return false;
-			if( matchedRows($db) == 0 ) if(!$db->query("INSERT INTO `profile_user_fields` ( `meta_field_id`, `user_id`, `value` ) VALUES ( '$field_id', '$usr_id', '$value' )")) return false;
+			if(!$db->query("UPDATE `profile_user_fields` SET `value`='§0',`user_id`='§1' WHERE `meta_field_id` Like '§2' AND `user_id` Like '§1'",[$value,$usr_id,$field_id])) return false;
+			if( $db->matchedRows($db) == 0 ) if(!$db->query("INSERT INTO `profile_user_fields` ( `meta_field_id`, `user_id`, `value` ) VALUES ( '§2', '§1', '§0' )",[$value,$usr_id,$field_id])) return false;
 			return true;
 		}
 
 		public static function listProfiles() {
-			if(!($db = connectDB()) ) return false;
+			if(!($db = new DB()) ) return false;
 			if(!($result = $db->query( "SELECT * FROM `profiles`") ) ) return false;
 			$ret = []; while(($e = $result->fetch_array(MYSQL_ASSOC))) { $ret[] = $e; }
 			return $ret;
@@ -88,8 +88,8 @@
 		}
 
 		public static function userExists( $id ) {
-			if(!($db = connectDB()) ) return false;
-			if(!($result = $db->query("SELECT * FROM `login_info` WHERE `id` Like '$id'") ) ) return false;
+			if(!($db = new DB()) ) return false;
+			if(!($result = $db->query("SELECT * FROM `login_info` WHERE `id` Like '§0'", [$id]) ) ) return false;
 			if( $result->num_rows == 0 )  return false;
 			return true;
 		}

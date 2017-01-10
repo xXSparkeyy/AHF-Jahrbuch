@@ -39,7 +39,7 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 	//#
 	//#######
 	public static function getSurveys( $hideInvisible=true ) {
-		if(!($db = connectDB()) ) return false;
+		if(!($db = new DB()) ) return false;
 		if(!($result = $db->query( "SELECT * FROM `survey_meta` WHERE ".($hideInvisible?"`survey_visible` Like 1":"1") ) ) ) return false;
 		$ret = []; while(($e = $result->fetch_array(MYSQL_ASSOC))) { $ret[] = $e; }
 		return $ret;
@@ -76,8 +76,8 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 	//#######
 	public function setMeta( $title, $description, $visible ) {
 		$visible = $visible?1:0;
-		if(!($db = connectDB()) ) {error_log($db->error); return SURVEY_MYSQL_ERROR;}
-		if(!($result = $db->query("UPDATE `survey_meta` SET `survey_title`='$title', `survey_description`='$description', `survey_visible`=$visible WHERE `survey_meta_id` Like ".$this->id) ) ) {$this->error=SURVEY_MYSQL_ERROR; return false;}
+		if(!($db = new DB()) ) {error_log($db->error); return SURVEY_MYSQL_ERROR;}
+		if(!($result = $db->query("UPDATE `survey_meta` SET `survey_title`='§0', `survey_description`='§1', `survey_visible`=§2 WHERE `survey_meta_id` Like §3", [$title, $description, $visible, $this->id]) ) ) {$this->error=SURVEY_MYSQL_ERROR; return false;}
 		$this->loadMeta();
 		return true;
 	}
@@ -87,8 +87,8 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 	//#
 	//#######
 	protected function loadMeta() {
-		if(!($db = connectDB()) ) {error_log($db->error); return SURVEY_MYSQL_ERROR;}
-		$id = $this->id; if(!($result = $db->query("SELECT * FROM `survey_meta` WHERE `survey_meta_id` Like $id") ) ) {$this->error=SURVEY_MYSQL_ERROR; return false;}
+		if(!($db = new DB()) ) {error_log($db->error); return SURVEY_MYSQL_ERROR;}
+		$id = $this->id; if(!($result = $db->query("SELECT * FROM `survey_meta` WHERE `survey_meta_id` Like §0",[$id]) ) ) {$this->error=SURVEY_MYSQL_ERROR; return false;}
 		if( $result->num_rows == 0 )  {$this->error=SURVEY_NOT_FOUND; return false;}
 		$result = $result->fetch_array(MYSQL_ASSOC);
 		$this->title       = $result["survey_title"];
@@ -103,10 +103,10 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 	//#######
 	protected function loadQuestions( $user_id = false ) {
 		$id = $this->id;
-		if( $user_id ) $q = "SELECT `question_id`, `question_title`,  COALESCE( `votes`, 0 ) as `votes`, `myvote` FROM `survey_questions` LEFT JOIN ( SELECT *, SUM( `vote_value` ) as votes FROM `survey_votes` LEFT JOIN ( SELECT `vote_value` As myvote, `vote_user` as user, `vote_question` as id FROM `survey_votes` WHERE `vote_user` Like '$user_id' ) as OwnVotes ON `vote_question` Like id GROUP BY `vote_question`) as votes ON `vote_question` LIKE `question_id` WHERE `survey_id` Like $id ORDER BY `votes` DESC";
-		else $q = "SELECT `question_id`, `question_title`, SUM(`vote_value`) As votes FROM `survey_votes`, `survey_questions` WHERE `survey_id` Like $id AND `vote_question` Like `question_id` GROUP BY `vote_question` ORDER BY `votes` DESC";
-		if(!($db = connectDB()) ) {error_log($db->error); return SURVEY_MYSQL_ERROR;}
-		if(!($result = $db->query( $q ) ) ) {$this->error=SURVEY_MYSQL_ERROR; return false;}
+		if( $user_id ) $q = "SELECT `question_id`, `question_title`,  COALESCE( `votes`, 0 ) as `votes`, `myvote` FROM `survey_questions` LEFT JOIN ( SELECT *, SUM( `vote_value` ) as votes FROM `survey_votes` LEFT JOIN ( SELECT `vote_value` As myvote, `vote_user` as user, `vote_question` as id FROM `survey_votes` WHERE `vote_user` Like '§1' ) as OwnVotes ON `vote_question` Like id GROUP BY `vote_question`) as votes ON `vote_question` LIKE `question_id` WHERE `survey_id` Like §0 ORDER BY `votes` DESC";
+		else $q = "SELECT `question_id`, `question_title`, SUM(`vote_value`) As votes FROM `survey_votes`, `survey_questions` WHERE `survey_id` Like §0 AND `vote_question` Like `question_id` GROUP BY `vote_question` ORDER BY `votes` DESC";
+		if(!($db = new DB()) ) {error_log($db->error); return SURVEY_MYSQL_ERROR;}
+		if(!($result = $db->query( $q, [$id,$user_id] ) ) ) {$this->error=SURVEY_MYSQL_ERROR; return false;}
 		if( $result->num_rows == 0 )  {$this->error=SURVEY_NOT_FOUND; return false;}
 		$ret = []; while(($e = $result->fetch_array(MYSQL_ASSOC))) { $ret[] = $e; }
 		$this->questions = $ret;
@@ -118,8 +118,8 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 	//#
 	//#######
 	public function removeQuestion( $id ) {
-		if(!($db = connectDB()) ) {error_log($db->error); return SURVEY_MYSQL_ERROR;}
-		if(!($result = $db->query("DELETE FROM `survey_questions` WHERE `question_id` Like $id") ) ) {$this->error=SURVEY_MYSQL_ERROR; return false;}
+		if(!($db = new DB()) ) {error_log($db->error); return SURVEY_MYSQL_ERROR;}
+		if(!($result = $db->query("DELETE FROM `survey_questions` WHERE `question_id` Like §0",[$id]) ) ) {$this->error=SURVEY_MYSQL_ERROR; return false;}
 		$this->loadQuestions();
 		return true;
 	}
@@ -129,9 +129,9 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 	//#
 	//#######
 	public function addQuestion(  $title ) {
-		if(!($db = connectDB()) ) {error_log($db->error); return SURVEY_MYSQL_ERROR;}
+		if(!($db = new DB()) ) {error_log($db->error); return SURVEY_MYSQL_ERROR;}
 		$id = $this->id;
-		if(!($result = $db->query("INSERT INTO `survey_questions` (survey_id,question_title) VALUES ($id, '$title' );") ) ) {$this->error=SURVEY_MYSQL_ERROR; return false;}
+		if(!($result = $db->query("INSERT INTO `survey_questions` (survey_id,question_title) VALUES (§0, '§1' );",[$id,$title]) ) ) {$this->error=SURVEY_MYSQL_ERROR; return false;}
 		$this->loadQuestions();
 		return true;
 	}
@@ -141,8 +141,8 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 	//#
 	//#######
 	public function editQuestion( $id, $title ) {
-		if(!($db = connectDB()) ) {error_log($db->error); return SURVEY_MYSQL_ERROR;}
-		if(!($result = $db->query("UPDATE `survey_questions` SET `question_title`='$title' WHERE `question_id` Like '$id'") ) ) {$this->error=SURVEY_MYSQL_ERROR; return false;}
+		if(!($db = new DB()) ) {error_log($db->error); return SURVEY_MYSQL_ERROR;}
+		if(!($result = $db->query("UPDATE `survey_questions` SET `question_title`='§0' WHERE `question_id` Like '§1'",[$title,$id]) ) ) {$this->error=SURVEY_MYSQL_ERROR; return false;}
 		$this->loadQuestions();
 		return true;
 	}
@@ -162,10 +162,10 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 	//#
 	//#######
 	public static function deleteSurvey( $id ) {
-		if(!($db = connectDB()) ) return false;
-		if(!($db->query("DELETE FROM `survey_meta`      WHERE `survey_meta_id` Like $id") ) ) return false;
-		if(!($db->query("DELETE FROM `survey_questions` WHERE `survey_id`  Like $id") ) ) return false;
-		if(!($db->query("DELETE FROM `survey_votes`     WHERE `survey__id` Like $id") ) ) return false;
+		if(!($db = new DB()) ) return false;
+		if(!($db->query("DELETE FROM `survey_meta`      WHERE `survey_meta_id` Like §0",[$id]) ) ) return false;
+		if(!($db->query("DELETE FROM `survey_questions` WHERE `survey_id`  Like §0",[$id]) ) ) return false;
+		if(!($db->query("DELETE FROM `survey_votes`     WHERE `survey__id` Like §0",[$id]) ) ) return false;
 		return true;
 	}
 	//#######
@@ -174,8 +174,8 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 	//#
 	//#######
 	public static function createSurvey( $title, $description ) {
-		if(!($db = connectDB()) ) return false;
-		if(!($result = $db->query("INSERT INTO `survey_meta` ( `survey_title`, `survey_description` ) VALUES ( '$title', '$description' )") ) ) return false;
+		if(!($db = new DB()) ) return false;
+		if(!($result = $db->query("INSERT INTO `survey_meta` ( `survey_title`, `survey_description` ) VALUES ( '§0', '§1' )",[$title,$description]) ) ) return false;
 		return new Survey( $db->query("SELECT LAST_INSERT_ID()")->fetch_array(MYSQL_NUM)[0] );
 	}
 	//#######
@@ -184,13 +184,13 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 	//#
 	//#######
 	public static function vote( $question_id, $user_id, $vote ) {
-		if(!($db = connectDB()) ) {error_log($db->error); return SURVEY_MYSQL_ERROR;}
-		if(!($result = $db->query( "SELECT 1 FROM `survey_votes` WHERE `vote_user` LIKE '$user_id' AND `vote_question` Like '$question_id' ") ) ) {$this->error=SURVEY_MYSQL_ERROR;return false;}
-		if(!($rslt = $db->query( "SELECT `survey_id` FROM `survey_questions` WHERE `question_id` Like '$question_id' ") ) ) {$this->error=SURVEY_MYSQL_ERROR;return false;}
+		if(!($db = new DB()) ) {error_log($db->error); return SURVEY_MYSQL_ERROR;}
+		if(!($result = $db->query( "SELECT 1 FROM `survey_votes` WHERE `vote_user` LIKE '§0' AND `vote_question` Like '§1' ",[$user_id,$question_id]) ) ) {$this->error=SURVEY_MYSQL_ERROR;return false;}
+		if(!($rslt = $db->query( "SELECT `survey_id` FROM `survey_questions` WHERE `question_id` Like '§0' ",[$question_id]) ) ) {$this->error=SURVEY_MYSQL_ERROR;return false;}
 		$survey_id=$rslt->fetch_array(MYSQL_NUM)[0];
-		if($result->num_rows == 0) { if(!($x = $db->query( "INSERT INTO `survey_votes` ( `vote_user`, `vote_question`, `vote_value`, `survey__id` ) VALUES ( '$user_id', '$question_id', $vote, $survey_id )") ) ) {return false; } }
-		else                       { if(!($x = $db->query( "UPDATE `survey_votes` SET `vote_value`=$vote WHERE `vote_user` LIKE '$user_id' AND `vote_question` Like '$question_id'") ) ) {return false;} }
-		return $db->query( "SELECT ownvote, SUM( `vote_value` ) as votes, '$question_id' as question FROM (SELECT `vote_value` as ownvote FROM `survey_votes` WHERE `vote_question` LIKE $question_id AND `vote_user` LIKE '$user_id') as ov, `survey_votes` WHERE `vote_question` LIKE $question_id" )->fetch_array(MYSQL_ASSOC);
+		if($result->num_rows == 0) { if(!($x = $db->query( "INSERT INTO `survey_votes` ( `vote_user`, `vote_question`, `vote_value`, `survey__id` ) VALUES ( '§0', '§1', §2, §3 )",[$user_id,$question_id,$vote,$survey_id]) ) ) {return false; } }
+		else                       { if(!($x = $db->query( "UPDATE `survey_votes` SET `vote_value`=§0 WHERE `vote_user` LIKE '§1' AND `vote_question` Like '§2'",[$vote,$user_id,$question_id]) ) ) {return false;} }
+		return $db->query( "SELECT ownvote, SUM( `vote_value` ) as votes, '§1' as question FROM (SELECT `vote_value` as ownvote FROM `survey_votes` WHERE `vote_question` LIKE §1 AND `vote_user` LIKE '§0') as ov, `survey_votes` WHERE `vote_question` LIKE §1", [$user_id,$question_id] )->fetch_array(MYSQL_ASSOC);
 	}
 
 }
