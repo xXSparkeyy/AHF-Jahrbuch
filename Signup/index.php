@@ -7,9 +7,9 @@
 		define( "CMSLOADSUBTPL", "register.tpl" );
 		if( isset($_POST["user_name"]) && isset($_POST["user_pw"]) ) {
 			$l = new Registration();
-			$l->register( $_POST["user_name"], $_POST["user_pw"] );
+			$login = $l->register( $_POST["user_name"], $_POST["user_pw"] );
 			if( !$l->getError() ) {
-				$usr = $l->user;
+				$usr = $login->;
 				Log::msg( "Profile", "$usr joined" );
 				header( "Location: /profile/$usr/edit/" );
 				return;

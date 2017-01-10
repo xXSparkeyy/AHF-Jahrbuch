@@ -5,8 +5,8 @@
 	}
 	else {
 		define( "CMSLOADSUBTPL", "login.tpl" );
-		if( isset( $_POST["loginhash"] ) ) {
-			$l = new Login( $_POST["loginhash"] );
+		if( isset( $_POST["username"] ) && isset( $_POST["password"] ) ) {
+			$l = new Login( $_POST["username"], $_POST["password"] );
 			if( !$l->getError() ) {
 				header( "Location: /profile/".$l->user );
 				return;

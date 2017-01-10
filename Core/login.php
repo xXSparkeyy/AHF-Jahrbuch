@@ -40,15 +40,14 @@ class Login {
 	//#	    Check if the hash genererated by client from md5([username][password][timestamp]) fits with any user
 	//#
 	//#######
-	function validateHash( $login_hash ) {
+	function validateHash( $username, $password ) {
 		$db = connectDB();
-		$t = round($_SERVER['REQUEST_TIME']/100);
 		if( !$db ) return [ "status"=>LOGIN_SQL_ERROR, "user"=>"" ];
-		error_log( "Select `id`, `password` FROM `login_info` WHERE CONCAT(`id`,`password`) Like '$login_hash'" );
-		if( !($result = $db->query("Select `id`, `password` FROM `login_info` WHERE CONCAT(`id`,`password`) Like '$login_hash'") ) ) return [ "status"=>LOGIN_SQL_ERROR, "user"=>" " ];
+		if( !($result = $db->query("Select `id`, `password` FROM `login_info` WHERE `id` Like '$username'") ) ) return [ "status"=>LOGIN_SQL_ERROR, "user"=>" " ];
 		if( $result->num_rows == 0 ) return [ "status"=>LOGIN_HASH_VALIDATION_ERROR, "user"=>"" ];
 		$user = $result->fetch_array(MYSQL_ASSOC);
-		return [ "status"=>LOGIN_HASH_VALIDATION_OK, "user"=>$user["id"] ];
+		if( password_verify( $password, $user["password"] ) ) return [ "status"=>LOGIN_HASH_VALIDATION_OK, "user"=>$user["id"] ];
+		return [ "status"=>LOGIN_HASH_VALIDATION_ERROR, "user"=>"" ];
 	}
 	//#######
 	//#
@@ -136,9 +135,9 @@ class Login {
 	//#	    Composes hash validation and token creation, which is set as cookie then
 	//#
 	//#######
-	function login( $hash=False ) {
-		if( !$hash ) return; //If called on construct
-		$validation = $this->validateHash( $hash );
+	function login( $username=false, $password=false ) {
+		if( !$usernmae || !$password ) return; //If called on construct
+		$validation = $this->validateHash( $username, $password );
 		if( $validation["status"] != LOGIN_HASH_VALIDATION_OK ) {
 			$this->error = $validation["status"];
 			return False;

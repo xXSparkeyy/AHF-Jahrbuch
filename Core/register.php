@@ -108,12 +108,14 @@ class Registration {
 	//#
 	//#######
 	protected function writeEntry( $nm, $pw, $fn, $ln ) {
+		$pw = password_hash($pw, PASSWORD_DEFAULT);
 		$db = connectDB();
 		if( !$db ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
 		if(!($result = $db->query( "SELECT `id` FROM `login_info` WHERE `id` Like '$nm'" ) ) ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
 		if( $result->num_rows > 0 ) return REGISTRATION_USER_EXISTS;
 		if(!($result = $db->query( "INSERT INTO `login_info` ( id, password ) VALUES ( '$nm', '$pw' )" ) ) )   {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
-		if(!($result = $db->query( "INSERT INTO `profiles` ( user_id, fname, lname ) VALUES ( '$nm', '$fn', '$ln' )" ) ) ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
+		if(!($result = $db->query( "SELECT `user_id` FROM `profiles` WHERE `user_id` Like '$nm'" ) ) ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
+		if( $result->num_rows == 0 ) if(!($result = $db->query( "INSERT INTO `profiles` ( user_id, fname, lname ) VALUES ( '$nm', '$fn', '$ln' )" ) ) ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
 		return REGISTRATION_SUCCESSFULL;
 	}
 	
@@ -133,13 +135,12 @@ class Registration {
 			$this->error = $moodleData["status"];
 			return false;
 		}
-		$password = md5( $password );
 		$status = $this->writeEntry( $username, $password, $moodleData["name"][0], $moodleData["name"][1] );
 		if( $status != REGISTRATION_SUCCESSFULL ) {
 			$this->error = $status;
 			return false;
 		}
-		$l = new Login( md5( $username.$password.$_SERVER['REQUEST_TIME'] ) );
+		$l = new Login( $username, $password ) );
 		$this->error = false;
 		return $l;
 	}
