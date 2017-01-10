@@ -136,12 +136,13 @@ class Login {
 	//#
 	//#######
 	function login( $username=false, $password=false ) {
-		if( !$usernmae || !$password ) return; //If called on construct
+		if( !$username || !$password ) return; //If called on construct
 		$validation = $this->validateHash( $username, $password );
 		if( $validation["status"] != LOGIN_HASH_VALIDATION_OK ) {
 			$this->error = $validation["status"];
 			return False;
 		}
+		$this->user = $username;
 		/*if( !$this->clearTokens( $validation["user"] ) ) {
 			$this->error = LOGIN_SQL_ERROR;
 			return false;
@@ -156,11 +157,10 @@ class Login {
 			return false;
 		}
 		setCookie( "login", $token["value"], time()+365*24*60*60, "/" );
-		$this->user = $validation["user"];
 	}
 	//#######
 	//#
-	//#	    Retuurns user id from login cookie or False, if not logged in or valid
+	//#	    Returns user id from login cookie or False, if not logged in or valid
 	//#
 	//#######
 	public static function checkUser() {

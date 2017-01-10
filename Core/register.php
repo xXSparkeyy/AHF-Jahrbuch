@@ -140,9 +140,7 @@ class Registration {
 			$this->error = $status;
 			return false;
 		}
-		$l = new Login( $username, $password ) );
-		$this->error = false;
-		return $l;
+		return true;
 	}
 	
 }

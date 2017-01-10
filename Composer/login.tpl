@@ -7,7 +7,7 @@
      </div>
      <div class="row s12">
         <div class="input-field col s12 m4 offset-m4">
-          <input id="user_name" name="name" type="text" class="validate">
+          <input id="user_name" name="username" type="text" class="validate">
           <label for="user_name">Benutzername</label>
         </div>
      </div>
@@ -23,7 +23,7 @@
         </p>
      </div>'?>
      <div class="row s12">
-          <input type="submit" id="loginbutton" class="waves-effect waves-light btn green col s12 m4 offset-m4">Login</a>
+          <input type="submit" id="loginbutton" value="Login" class="waves-effect waves-light btn green col s12 m4 offset-m4">
 	</div>
 	<div class="row s12  center-align">
 		<i class="italic col s12 m4 offset-m4">Oder</i>
