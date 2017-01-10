@@ -8,8 +8,9 @@
 		if( isset($_POST["user_name"]) && isset($_POST["user_pw"]) ) {
 			$l = new Registration();
 			$l->register( $_POST["user_name"], $_POST["user_pw"] );
+			$login = new Login( $_POST["user_name"], $_POST["user_pw"] );
 			if( !$l->getError() ) {
-				$usr = $l->user;
+				$usr = $login->user;
 				Log::msg( "Profile", "$usr joined" );
 				header( "Location: /profile/$usr/edit/" );
 				return;
