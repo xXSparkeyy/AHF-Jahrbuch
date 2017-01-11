@@ -29,7 +29,7 @@ if( !SURVEYEDIT && Login::isAdmin( $login_user["user_id"] ) ) {
 		echo '<ul><li><a href="javascript:add()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
 			  <a href="javascript:save()" class="btn-floating btn-large waves-effect waves-light orange"><i class="material-icons">save</i></a>
 			  <a href="/Surveys/'.SURVEY.'/" class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">list</i></a><a href="#deletegroup" class="modal-trigger btn-floating btn-large waves-effect waves-light red"><i class="material-icons">delete</i></a></li></ul>
-		<input type="hidden" value="'.SURVEY.'" name="survey_id"><input id="muckefuck" type="checkbox" name="visib" '.($s->isPublic()?"checked":"").'><label style="margin-right: 1%" for="muckefuck">Öffentlich</label>';
+		<input type="hidden" value="'.SURVEY.'" name="survey_id"><input id="muckefuck" type="checkbox" name="flag[]" value="1" '.($s->isPublic()?"checked":"").'><label style="margin-right: 1%" for="muckefuck">Öffentlich</label><input id="muckefuck1" type="checkbox" name="flag[]" value="3" '.($s->isVotePublic()?"checked":"").'><label style="margin-right: 1%" for="muckefuck1">Ergebnis Sichtbar</label><input id="muckefuck2" type="checkbox" value="5" name="flag[]" '.($s->isVoteable()?"checked":"").'><label style="margin-right: 1%" for="muckefuck2">Abstimmen möglich</label>';
 	}
 	echo '<div id="questions">';
 	foreach( ($s->getQuestions()) as $question ) {
@@ -40,18 +40,25 @@ if( !SURVEYEDIT && Login::isAdmin( $login_user["user_id"] ) ) {
 		$up = $myvote==1 ?"light-green-text":"";
 		$down = $myvote==-1?"red-text":"";
 		if( SURVEYEDIT ) echo "<div class='col card-panel grey lighten-5 z-depth-1 s12 l8 offset-l2'><h4><input name='$id' type='text' value='$title'></h4></div>";
-		else echo "<div id='$id' class='col card-panel grey lighten-5 z-depth-1 s12 l8 offset-l2'><h4><span style='float: right'><span id='votes_$id' class='votes'>$votes</span><a id='up_$id' href='javascript:vote($id,1)' style='font-size: inherit' class='material-icons $up'>expand_less</a><a id='down_$id' href='javascript:vote($id,-1)' style='font-size: inherit' class='material-icons $down'>expand_more</a></span>$title</h4></div>";
+		else { ?>
+			<div id='$id' class='col card-panel grey lighten-5 z-depth-1 s12 l8 offset-l2'>
+				<h4>
+					<span style='float: right'>
+						<?php if( $s->isVotePublic() || Login::isAdmin($login_user["user_id"]) ) echo "<span id='votes_$id' class='votes'>$votes</span>";?>
+						<?php if( $s->isVoteable()  ) echo "<a id='up_$id' href='javascript:vote($id,1)' style='font-size: inherit' class='material-icons $up'>expand_less</a><a id='down_$id' href='javascript:vote($id,-1)' style='font-size: inherit' class='material-icons $down'>expand_more</a>";?>
+					</span>
+					<?php echo $title; ?>
+				</h4>
+			</div>
+	<?php }
 	}
+	
 	if( SURVEYEDIT ) echo "</div></form>";
-?>
-<?php if( Login::isAdmin($login_user["user_id"])  ) {?>
+if( Login::isAdmin($login_user["user_id"])  ) {?>
 
   <div id="deletegroup" class="modal">
 	<div class="modal-content">
-	  <form id="deleteform" method="POST" action="/group/setValues.php"><h4>Are you sure?</h4>
-	  <input type="hidden" name="deletegroup" value="true">
-	  <input type="hidden" name="group" value="<?php echo GROUP; ?>">
-	  </form>
+		<h4>Are you sure?</h4>
 	</div>
 	<div class="modal-footer">
 	  <a href="/Surveys/<?php echo SURVEY; ?>/delete/" class="modal-action waves-effect waves-green btn-flat ">Delete</a>
@@ -67,7 +74,7 @@ if( !SURVEYEDIT && Login::isAdmin( $login_user["user_id"] ) ) {
 		x.onreadystatechange = function () {
 			console.log( x.readystate )
 			if( x.readyState != 4 ) return
-			eval( "r = "+x.responseText )
+			var r = JSON.parse( x.responseText )
 			if( r ) {
 				document.getElementById( "votes_"+r.question ).innerText = r.votes
 				if( r.ownvote == 1 ) {
@@ -79,6 +86,7 @@ if( !SURVEYEDIT && Login::isAdmin( $login_user["user_id"] ) ) {
 					document.getElementById( "down_"+r.question ).setAttribute( "class", "material-icons red-text" )
 				}
 			}
+			<?php if( $s->isVotePublic() ) {?>
 			var questions = document.getElementById( "questions" )
 			var o = document.getElementById( r.question ).cloneNode(true)
 			document.getElementById( r.question ).remove()
@@ -90,6 +98,7 @@ if( !SURVEYEDIT && Login::isAdmin( $login_user["user_id"] ) ) {
 				}
 			}
 			questions.appendChild( o )
+			<?php } ?>
 		}
 		x.send();
 	}

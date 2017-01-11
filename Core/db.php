@@ -1,15 +1,13 @@
 <?php require_once( "ngit_sqlcreds.php" );
 	if( isset($_COOKIE["debug"]) ) ini_set( "display_errors", "1" );
 	else ini_set( "display_errors", "0" );
-	
-	
-	
+
 	class DB extends mysqli {
 		
 		function connect() {
 			parent::connect(YB_HOST, YB_USER, YB_PASSWD, YB_TABLE);
-			if( $db->connect_errno ) {
-				error_log( $db->connect_error );
+			if( $this->connect_errno ) {
+				error_log( $this->connect_error );
 				return False;
 			}
 			return true;
