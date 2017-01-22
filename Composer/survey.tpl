@@ -70,7 +70,7 @@ if( Login::isAdmin($login_user["user_id"])  ) {?>
 <script>
 	function vote( question, value ) {
 		var x = new XMLHttpRequest()
-		x.open( "GET", "/JSON/vote?value="+value+"&question="+question )
+		x.open( "GET", "/api/vote?value="+value+"&question="+question )
 		x.onreadystatechange = function () {
 			console.log( x.readystate )
 			if( x.readyState != 4 ) return

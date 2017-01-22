@@ -18,11 +18,16 @@
 			return $info["Rows matched"];
 		}
 		
-		public function query( $query, $params=[] ) {
+		public function query( $query, $params=[], $echo=false ) {
 				for($i=0;$i<count($params);$i++) {
 					$query = str_replace( "§$i", $this->real_escape_string($params[$i]), $query );
 				}
+				if($echo) echo $query;
 				return parent::query( $query );
+		}
+		public function resultToArray($result,$limit=-1) {
+			$ret = []; $x=0;while(($e = $result->fetch_array(MYSQL_ASSOC))&&$x!=$limit) {$ret[] = $e; $x++; }
+			return $ret;
 		}
 		function DB() {
 			$this->connect();

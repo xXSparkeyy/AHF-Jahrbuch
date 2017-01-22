@@ -199,8 +199,8 @@ define( "SURVEY_NOT_VISIBLE", 2 );
 	public static function vote( $question_id, $user_id, $vote ) {
 		if(!($db = new DB()) ) {error_log($db->error); return SURVEY_MYSQL_ERROR;}
 		if(!($result = $db->query( "SELECT 1 FROM `survey_votes` WHERE `vote_user` LIKE '§0' AND `vote_question` Like '§1' ",[$user_id,$question_id]) ) ) {$this->error=SURVEY_MYSQL_ERROR;return false;}
-		if(!($rslt = $db->query( "SELECT `survey_id` FROM `survey_questions` WHERE `question_id` Like '§0' ",[$question_id]) ) ) {$this->error=SURVEY_MYSQL_ERROR;return false;}
-		$survey_id=$rslt->fetch_array(MYSQL_NUM)[0];
+		if(!($rslt = $db->query( "SELECT `survey_id` FROM `survey_questions` WHERE `question_id` Like '§0' AND (`flag`=5 AND`flag`=6 AND`flag`=8 AND`flag`=9)",[$question_id]) ) ) {$this->error=SURVEY_MYSQL_ERROR;return false;}
+		if( !($survey_id=$rslt->fetch_array(MYSQL_NUM)[0])) return false;
 		if($result->num_rows == 0) { if(!($x = $db->query( "INSERT INTO `survey_votes` ( `vote_user`, `vote_question`, `vote_value`, `survey__id` ) VALUES ( '§0', '§1', §2, §3 )",[$user_id,$question_id,$vote,$survey_id]) ) ) {return false; } }
 		else                       { if(!($x = $db->query( "UPDATE `survey_votes` SET `vote_value`=§0 WHERE `vote_user` LIKE '§1' AND `vote_question` Like '§2'",[$vote,$user_id,$question_id]) ) ) {return false;} }
 		return $db->query( "SELECT ownvote, SUM( `vote_value` ) as votes, '§1' as question FROM (SELECT `vote_value` as ownvote FROM `survey_votes` WHERE `vote_question` LIKE §1 AND `vote_user` LIKE '§0') as ov, `survey_votes` WHERE `vote_question` LIKE §1", [$user_id,$question_id] )->fetch_array(MYSQL_ASSOC);
