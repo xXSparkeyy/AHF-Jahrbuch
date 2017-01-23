@@ -36,7 +36,7 @@ if( $user ) {
 <a class="modal-trigger waves-effect waves-light btn" onclick="$('#field_user')[0].value='user:<?php echo Login::checkUser()['user_id'];?>'" href="#writecomment">Comment</a>
 <div id="writecomment" class="modal">
 	<div class="modal-content">
-	  <form id="createform" method="POST" action="/JSON/comment/post/"><h4>Schreib etwas (nettes)!</h4>
+	  <form id="createform" method="POST" action="/api/comment/post/"><h4>Schreib etwas (nettes)!</h4>
 	  <input type="hidden" id="field_user" name="parent" value="">
 	  	<div class="input-field col s12"><textarea id="wfc" type="text" name="text"></textarea><label for="wfc">Beschreibung</label></div>
 	</div>

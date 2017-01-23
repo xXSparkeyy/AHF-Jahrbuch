@@ -145,7 +145,7 @@
 		var x = new XMLHttpRequest();
 		x.open( "POST", "/api/comment/get/");
 		x.onreadystatechange = function() {
-			if( x.readyState == 4 ) { $("#comments")[0].innerHTML = x.responseText; $(".modal-trigger").leanModal(); }
+			if( x.readyState == 4 ) { $("#comments")[0].innerHTML = x.responseText; $(".modal-trigger").leanModal(); $('.collapsible').collapsible(); }
 		}
 		x.send();
 	}
