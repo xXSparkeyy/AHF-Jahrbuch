@@ -15,9 +15,9 @@
 		<meta charset="utf-8"/>
 	</head>
 	<body>
+		<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 		<?php require_once "nav.tpl"; ?>
 		<?php require_once CMSLOADSUBTPL; ?>
-		<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
 		<script type="text/javascript" src="https://oss.maxcdn.com/jquery.form/3.50/jquery.form.min.js"></script>
 		<script>
@@ -32,12 +32,14 @@
 				      success: function(e){
 				        f.resetForm();
 				        b.removeAttr('disabled');
-								l.fadeOut();
+						l.fadeOut();
 				        p.html(e).fadeIn();
 						try { reloadImage(); } catch(e){}
 				      },
 				      error: function(e){
+				        f.resetForm();
 				        b.removeAttr('disabled');
+						l.fadeOut();
 				        p.html(e).fadeIn();
 				      }
 				  	});
@@ -57,9 +59,12 @@
 				try{ initializeUpload("profilkind") } catch(e) {}
 				try{ initializeUpload("group") } catch(e) {}
 			});
-			
+			$('.collapsible').collapsible();
 			try {
 				reloadImage();
+			} catch(e){}
+			try {
+				loadComments();
 			} catch(e){}
 
 		</script>

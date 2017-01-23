@@ -78,7 +78,7 @@
 
 		public static function listProfiles() {
 			if(!($db = new DB()) ) return false;
-			if(!($result = $db->query( "SELECT * FROM `profiles`") ) ) return false;
+			if(!($result = $db->query( "SELECT * FROM `profiles` ORDER BY `FName` ASC") ) ) return false;
 			$ret = []; while(($e = $result->fetch_array(MYSQL_ASSOC))) { $ret[] = $e; }
 			return $ret;
 		}

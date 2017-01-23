@@ -58,6 +58,11 @@
      	<br><br>';
 
      ?>
+	 <div  class="row">
+		 <div id="comments" class="col s10 offset-s1 m8 offset-m2 l6 offset-l3">
+		 
+		 </div>
+     </div>
      <div class="row">
      <h2>Gruppen</h2>
      	<?php
@@ -103,7 +108,7 @@
      function grantAdmin() {
      	var adb = document.getElementById( "adminbutton" )
      	var x = new XMLHttpRequest()
-     	x.open( "GET", "/JSON/grantadmin/?user=<?php echo PROFILEUSR; ?>"  );
+     	x.open( "GET", "/api/admin/grant/?user=<?php echo PROFILEUSR; ?>"  );
      	x.onreadystatechange = function() {
      		if( x.readyState == 4 && x.status == 200 ) {
      			var a = eval(x.responseText);
@@ -116,7 +121,7 @@
      function revokeAdmin() {
      	var adb = document.getElementById( "adminbutton" )
      	var x = new XMLHttpRequest()
-     	x.open( "GET", "/JSON/revokeadmin/?user=<?php echo PROFILEUSR; ?>" );
+     	x.open( "GET", "/api/admin/revoke/?user=<?php echo PROFILEUSR; ?>" );
      	x.onreadystatechange = function() {
      		if( x.readyState == 4 && x.status == 200 ) {
      			var a = eval(x.responseText);
@@ -126,6 +131,24 @@
      	}
      	x.send();
      }
+     var target = ""
+	var user = "<?php echo $p->getID();?>"
+	function writeComment( text ) {
+		var x = new XMLHttpRequest();
+		x.open( "POST", "/api/comment/post/?text="+text+(target?"&parent="+target:"&user"+user) );
+		x.onreadystatechange = function() {
+			if( x.readyState == 4 ) reloadComments();
+		}
+		x.send();
+	}
+	function loadComments() {
+		var x = new XMLHttpRequest();
+		x.open( "POST", "/api/comment/get/");
+		x.onreadystatechange = function() {
+			if( x.readyState == 4 ) { $("#comments")[0].innerHTML = x.responseText; $(".modal-trigger").leanModal(); $('.collapsible').collapsible(); }
+		}
+		x.send();
+	}
      </script>
      <style>
      	#adminbutton {

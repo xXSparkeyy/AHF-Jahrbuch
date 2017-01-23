@@ -110,65 +110,22 @@
 			
 			  
 		<?php }else{ ?>
+		<h1>Abitur 2017</h1>
+		<?php foreach(Profile::listProfiles() as $usr ) {
+				$member = new Profile( $usr["user_id"], false );
+				$name = $member->getFirstName()." ".$member->getLastName();
+				$id = $member->getID();
+				$img = $member->getAvatar();?>
+			<div class="col s6 m4 l3" style="padding: 2%; min-height: 400px;">
+				<a href="/profile/<?php echo $id;?>/"><div style="position: relative" class="card-panel grey lighten-5 z-depth-1 group-member">
+					<div style="position: relative"><div style="background: url(<?php echo $img;?>)" class="avatar circle"></div></div>
+					<h4 class="center">
+						<?php echo $name;?>
+					</h4>
+				</div></a>
+			</div>
 		
-		
-		<style>
-			@keyframes spacken {
-				000% { left: 10%; top: 3%; }
-				020% { left: 46%; top: 0%; }
-				040% { left: 36%; top: 25%; }
-				060% { left: 0%; top: 50%; }
-				080% { left: 50%; top: 0%; }
-				100% { left: 19%; top: 33%; }
-			}
-			@keyframes bgspacken {
-				000% { background: #FFF; }
-				010% { background: transparent; }
-				020% { background: #FF0; }
-				030% { background: transparent; }
-				040% { background: #0FF; }
-				050% { background: transparent; }
-				060% { background: #F0F; }
-				070% { background: transparent; }
-				080% { background: #00F; }
-				090% { background: transparent; }
-				100% { background: #F00; }
-			}
-			video { width: 40%; position: fixed; 
-				animation: spacken;			
-				animation-duration: 3s;
-				animation-iteration-count: infinite;
-				animation-direction: alternate-reverse;
-				animation-timing-function: cubic-bezier(0.45, -0.89, 0.69, 2.89);
-			}
-			#background {
-				width: 100%; left: 0;
-				height: 100%; top: 0;
-				position: fixed;
-				animation: bgspacken;			
-				animation-duration: 1s;
-				animation-iteration-count: infinite;
-				animation-direction: alternate;
-				animation-timing-function: cubic-bezier(0.45, -0.89, 0.69, 2.89);
-			}
-			#leave {
-				text-align: center;
-				position: fixed;
-				width: 100%;
-				top: 40%;
-			}
-		</style>
-		
-		<div id="background" onclick="copyMV()"><video id="v1" autoplay="true" loop="true" src="/trippycatshit.webm"></video></div>
-		<h1 id="leave"><a href="/profile/me/">Zum verlassen hier klicken</a></h1>
-		
-		<script>
-			function copyMV() {
-				var x = document.getElementById("v1").cloneNode(); x.setAttribute("muted", "true");document.getElementById("background").appendChild(x)
-			}
-		</script>
-		
-		<?php } ?>
+		<?php }} ?>
 	</div>
 
 </div>

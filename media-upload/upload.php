@@ -1,4 +1,5 @@
   <?php require_once $_SERVER["DOCUMENT_ROOT"]."/Core/index.php";
+	ini_set("upload_max_filesize", "8M");
 
 	function codeToMessage($code) 
     { 
@@ -32,7 +33,7 @@
         return $message; 
     } 
     
-    /*function random_bytes($n) {
+    /*function random_bytes($n=5) {
     	$ret = "";for( $i=0;$i<$n;$i++)$ret+=chr(rand(65,90)); return $ret;
     }*/
 
@@ -75,14 +76,14 @@
           continue;
 
         // skip unprotected files
-        if( !in_array(pathinfo($name, PATHINFO_EXTENSION), $extensions) )
+        if( !in_array(strtolower(pathinfo($name, PATHINFO_EXTENSION)), $extensions) )
           continue;
 
 
           if($upload_type == 'profil' && file_exists($dir."avatar.jpg") ) unlink($dir."avatar.jpg");
           if($upload_type == 'profilkind' && file_exists($dir."avatar_kind.jpg") ) unlink($dir."avatar_kind.jpg");
 
-          switch (pathinfo($name, PATHINFO_EXTENSION)) {
+          switch (strtolower(pathinfo($name, PATHINFO_EXTENSION))) {
               case 'jpg':
               case 'jpeg':
                  $image = imagecreatefromjpeg($_FILES[$upload_type]['tmp_name'][$i]);
@@ -102,7 +103,7 @@
             $exportpath = $dir.time().".".Login::checkUser()["user_id"].".".random_bytes(5).".jpg";
           } else continue;
 
-          if( imagejpeg($image, $exportpath,100) ) $count++;
+          if( imagejpeg($image, $exportpath, 100) ) $count++;
       }
 
       echo "$count Bild".($count!=1?"er":"")." erfolgreich hochgeladen!";

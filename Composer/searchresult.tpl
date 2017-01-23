@@ -1,53 +1,40 @@
-<?php ?>
+<?php
+	$q = explode( "/", $_SERVER['REQUEST_URI'] );
+	$q=isset($q[2])?$q[2]:"";
+?>
 <div class="container" action="#">
-	<form action="/search" class="row">
+	<form id="searchform" action="#" class="row">
 		<div class="input-field">
 
 		  		<i class="material-icons float_l search_icon">search</i>
 					<span>
-						<input id="search" class="search_bar" type="search" name="q" value="<?php echo QUERY;?>" required>
+						<input id="search" class="search_bar" type="search" value="<?php echo $q;?>">
 					</span>
 
 		</div>
  	</form>
- 	<?php
- 		if( QUERY ) {
- 			$res = Search::forUsers( QUERY );
- 			$n = count( $res );
- 			if( count( $res ) > 0 ) {
-		 		echo "<h1>Profile</h1>";
-				foreach( $res as $itm ) {
-					$s = Search::highlightString( $itm["title"], QUERY );
-					$a = $itm["link"];
-					echo "<div class='col card-panel grey lighten-5 z-depth-1 s12 l8 offset-l2'><h5><a href='/profile/$a/'>$s</a></h5></div>";
-				}
-			}
-			$res = Search::forSurveys( QUERY );
-			$n += count( $res );
-			if( count( $res ) > 0 ) {
-				echo "<h1>Umfragen</h1>";
-				foreach( $res as $itm ) {
-					$s = Search::highlightString( $itm["title"], QUERY );
-					$a = $itm["link"];
-					echo "<div class='col card-panel grey lighten-5 z-depth-1 s12 l8 offset-l2'><h5><a href='/Surveys/$a/'>$s</a></h5></div>";
-				}
-			}
-			$res = Search::forGroups( QUERY );
-			$n += count( $res );
-			if( count( $res ) > 0 ) {
-				echo "<h1>Gruppen</h1>";
-				foreach( $res as $itm ) {
-					$s = Search::highlightString( $itm["title"], QUERY );
-					$a = $itm["link"];
-					echo "<div class='col card-panel grey lighten-5 z-depth-1 s12 l8 offset-l2'><h5><a href='/group/$a/'>$s</a></h5></div>";
-				}
-			}
-			if( $n == 0 ) {
-				echo '<h1 class="grey-text text-lighten-1 center"><i style="font-size: 250%; margin-top: 10%;" class="material-icons">search</i></h1><h5 class="grey-text text-lighten-1 center">Nichts Gefunden für: '.QUERY.'</h5>';
-			}
-		}
-		else {
-			echo '<h1 class="grey-text text-lighten-1 center"><i style="font-size: 250%; margin-top: 10%;" class="material-icons">search</i></h1><h5 class="grey-text text-lighten-1 center">Suche nach Personen und Umfagen</h5>';
-		}
-	?>
+ 	<div id="searchresult">
+ 	 	
+	<script>
+ 		$("#searchform")[0].onsubmit = function( e ) {
+ 			e.preventDefault();
+ 			var query = $("#search")[0].value;
+ 			history.replaceState( query, "Suche", "/search/"+query );
+ 			doSearch( query )
+ 		}
+ 		window.addEventListener("popstate", function(e) {
+    		doSearch( e.state )
+		});
+ 		function doSearch( q ) {
+ 			var x = new XMLHttpRequest()
+ 			x.open( "GET", "/api/search/?query="+q )
+ 			x.onreadystatechange = function() {
+ 				if( x.readyState == 4 ) {
+ 					$("#searchresult")[0].innerHTML = x.responseText;
+ 				}
+ 			}
+ 			x.send()
+ 		}
+ 		document.body.onload = function(e) { doSearch( "<?php echo $q;?>" ); }
+ 	</script>
 </div>

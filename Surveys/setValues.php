@@ -13,12 +13,12 @@
 		$survey = new Survey( $sid );
 		$title= "";
 		$desc = "";
-		$visib= false;
+		$visib= 0;
 		foreach( $_POST as $id => $value ) {
 			if( $id == "survey_id" ) { continue; }
 			if( $id == "title" ) { $title = $value; continue; }
 			if( $id == "desc"  ) { $desc  = $value; continue; }
-			if( $id == "visib" ) { $visib = true  ; continue; }
+			if( $id == "flag" ) { foreach( $value as $i ) { $visib+=$i; } continue; }
 			if( $id == "new"   ) {
 				foreach( $value as $t ) {
 					if( $t != "" ) $survey->addQuestion( $t );

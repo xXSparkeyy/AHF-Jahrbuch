@@ -1,5 +1,5 @@
 <?php require_once $_SERVER["DOCUMENT_ROOT"]."/Core/index.php";
-	$usr = Login::checkUser()["user_id"];
+	if(!($usr = Login::checkUser()["user_id"])) return;
 	if( isset($_GET["image"]) ) {
 		$group = $_GET["group"];
 		if( Group::isMod( $group, $usr ) ) {

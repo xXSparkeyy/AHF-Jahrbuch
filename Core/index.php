@@ -4,6 +4,7 @@
 	require_once( "login.php" );     //TODO ### Finished
 	require_once( "register.php" );  //TODO ### Finished
 	require_once( "survey.php" );    //TODO ### Finished
+	require_once( "comments.php" );    //TODO ### Finished
 	require_once( "profile.php" );   //TODO ### Finished
 	require_once( "group.php" );     //TODO ### Finished
 	require_once( "search.php" );    //TODO ### Finished
