@@ -1,6 +1,5 @@
   <?php require_once $_SERVER["DOCUMENT_ROOT"]."/Core/index.php";
-
-	ini_set("upload_max_filesize", "8M")
+	ini_set("upload_max_filesize", "8M");
 
 	function codeToMessage($code) 
     { 
@@ -34,7 +33,7 @@
         return $message; 
     } 
     
-    /*function random_bytes($n) {
+    /*function random_bytes($n=5) {
     	$ret = "";for( $i=0;$i<$n;$i++)$ret+=chr(rand(65,90)); return $ret;
     }*/
 

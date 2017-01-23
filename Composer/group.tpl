@@ -82,7 +82,7 @@
 						 function grantMod( id ) {
 						 	var adb = document.getElementById( "modbutton"+id )
 						 	var x = new XMLHttpRequest()
-						 	x.open( "GET", "/JSON/grantmod/?group=<?php echo GROUP; ?>&user="+id  );
+						 	x.open( "GET", "/api/group/grantmod/?group=<?php echo GROUP; ?>&user="+id  );
 						 	x.onreadystatechange = function() {
 						 		if( x.readyState == 4 && x.status == 200 ) {
 						 			var a = true;//eval(x.responseText);
@@ -95,7 +95,7 @@
 						 function revokeMod( id ) {
 						 	var adb = document.getElementById( "modbutton"+id )
 						 	var x = new XMLHttpRequest()
-						 	x.open( "GET", "/JSON/revokemod/?group=<?php echo GROUP; ?>&user="+id );
+						 	x.open( "GET", "/api/group/revokemod/?group=<?php echo GROUP; ?>&user="+id );
 						 	x.onreadystatechange = function() {
 						 		if( x.readyState == 4 && x.status == 200 ) {
 						 			var a = false;//eval(x.responseText);
@@ -108,7 +108,7 @@
 						 function kick( id ) {
 						 	var adb = document.getElementById( "member"+id )
 						 	var x = new XMLHttpRequest()
-						 	x.open( "GET", "/JSON/removefromgroup/?group=<?php echo GROUP; ?>&user="+id );
+						 	x.open( "GET", "/api/group/remove/?group=<?php echo GROUP; ?>&user="+id );
 						 	x.onreadystatechange = function() {
 						 		if( x.readyState == 4 && x.status == 200 ) {
 						 			var name = adb.getElementsByTagName("h4")[0].innerText
@@ -121,7 +121,7 @@
 						 function add( id ) {
 						 	var adb = document.getElementById( "addmbmr"+id )
 						 	var x = new XMLHttpRequest()
-						 	x.open( "GET", "/JSON/addtogroup/?group=<?php echo GROUP; ?>&user="+id );
+						 	x.open( "GET", "/api/group/add/?group=<?php echo GROUP; ?>&user="+id );
 						 	x.onreadystatechange = function() {
 						 		if( x.readyState == 4 && x.status == 200 ) {
 						 			adb.remove();
@@ -137,7 +137,7 @@
 						 function reloadImage() {
 						 	var g = document.getElementById( "gallery" )
 						 	var x = new XMLHttpRequest()
-						 	x.open( "GET", "/JSON/getimages/" );
+						 	x.open( "GET", "/api/getimages/" );
 						 	x.onreadystatechange = function() {
 						 		if( x.readyState == 4 && x.status == 200 ) {
 						 			eval( "var img = "+x.responseText )

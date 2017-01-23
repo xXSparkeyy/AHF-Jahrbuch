@@ -32,12 +32,14 @@
 				      success: function(e){
 				        f.resetForm();
 				        b.removeAttr('disabled');
-								l.fadeOut();
+						l.fadeOut();
 				        p.html(e).fadeIn();
 						try { reloadImage(); } catch(e){}
 				      },
 				      error: function(e){
+				        f.resetForm();
 				        b.removeAttr('disabled');
+						l.fadeOut();
 				        p.html(e).fadeIn();
 				      }
 				  	});
@@ -57,9 +59,12 @@
 				try{ initializeUpload("profilkind") } catch(e) {}
 				try{ initializeUpload("group") } catch(e) {}
 			});
-			
+			$('.collapsible').collapsible();
 			try {
 				reloadImage();
+			} catch(e){}
+			try {
+				loadComments();
 			} catch(e){}
 
 		</script>

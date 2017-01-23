@@ -116,7 +116,7 @@
 				$name = $member->getFirstName()." ".$member->getLastName();
 				$id = $member->getID();
 				$img = $member->getAvatar();?>
-			<div class="col s6 m4 l3" style="padding: 2%">
+			<div class="col s6 m4 l3" style="padding: 2%; min-height: 400px;">
 				<a href="/profile/<?php echo $id;?>/"><div style="position: relative" class="card-panel grey lighten-5 z-depth-1 group-member">
 					<div style="position: relative"><div style="background: url(<?php echo $img;?>)" class="avatar circle"></div></div>
 					<h4 class="center">
