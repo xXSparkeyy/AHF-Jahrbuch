@@ -29,7 +29,7 @@ if( !SURVEYEDIT && Login::isAdmin( $login_user["user_id"] ) ) {
 		echo '<ul><li><a href="javascript:add()" class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
 			  <a href="javascript:save()" class="btn-floating btn-large waves-effect waves-light orange"><i class="material-icons">save</i></a>
 			  <a href="/Surveys/'.SURVEY.'/" class="btn-floating btn-large waves-effect waves-light blue"><i class="material-icons">list</i></a><a href="#deletegroup" class="modal-trigger btn-floating btn-large waves-effect waves-light red"><i class="material-icons">delete</i></a></li></ul>
-		<input type="hidden" value="'.SURVEY.'" name="survey_id"><input id="muckefuck" type="checkbox" name="flag[]" value="1" '.($s->isPublic()?"checked":"").'><label style="margin-right: 1%" for="muckefuck">Öffentlich</label><input id="muckefuck1" type="checkbox" name="flag[]" value="3" '.($s->isVotePublic()?"checked":"").'><label style="margin-right: 1%" for="muckefuck1">Ergebnis Sichtbar</label><input id="muckefuck2" type="checkbox" value="5" name="flag[]" '.($s->isVoteable()?"checked":"").'><label style="margin-right: 1%" for="muckefuck2">Abstimmen möglich</label>';
+		<input type="hidden" value="'.SURVEY.'" name="survey_id"><input id="muckefuck" type="checkbox" name="flag[]" value="1" '.($s->isPublic()?"checked":"").'><label style="margin-right: 1%" for="muckefuck">Öffentlich</label><input id="muckefuck1" type="checkbox" name="flag[]" value="2" '.($s->isVotePublic()?"checked":"").'><label style="margin-right: 1%" for="muckefuck1">Ergebnis Sichtbar</label><input id="muckefuck2" type="checkbox" value="4" name="flag[]" '.($s->isVoteable()?"checked":"").'><label style="margin-right: 1%" for="muckefuck2">Abstimmen möglich</label><input id="muckefuck3" type="checkbox" value="8" name="flag[]" '.($s->isDownVoteable()?"checked":"").'><label style="margin-right: 1%" for="muckefuck3">Downvotes möglich</label>';
 	}
 	echo '<div id="questions">';
 	foreach( ($s->getQuestions()) as $question ) {
@@ -77,14 +77,8 @@ if( Login::isAdmin($login_user["user_id"])  ) {?>
 			var r = JSON.parse( x.responseText )
 			if( r ) {
 				document.getElementById( "votes_"+r.question ).innerText = r.votes
-				if( r.ownvote == 1 ) {
-					document.getElementById( "up_"+r.question ).setAttribute( "class", "material-icons light-green-text" )
-					document.getElementById( "down_"+r.question ).setAttribute( "class", "material-icons" )
-				}
-				else {
-					document.getElementById( "up_"+r.question ).setAttribute( "class", "material-icons" )
-					document.getElementById( "down_"+r.question ).setAttribute( "class", "material-icons red-text" )
-				}
+					document.getElementById( "up_"+r.question   ).setAttribute( "class", r.ownvote ==  1? "material-icons light-green-text":"material-icons" )
+					document.getElementById( "down_"+r.question ).setAttribute( "class", r.ownvote == -1? "material-icons light-green-text":"material-icons" )
 			}
 			<?php if( $s->isVotePublic() ) {?>
 			var questions = document.getElementById( "questions" )
