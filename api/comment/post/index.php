@@ -1,5 +1,5 @@
 <?php require_once $_SERVER["DOCUMENT_ROOT"]."/Core/index.php";
-	$user = Login::checkUser()["user_id"];
+	if(!($user = Login::checkUser()["user_id"])) return;
 	
 	if( isset( $_POST["text"] ) ) {
 		if( isset( $_POST["parent"] ) ) {
