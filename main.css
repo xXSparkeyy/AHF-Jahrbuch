@@ -1,3 +1,32 @@
+.crazy-color{
+  background: #E6E1E1;
+}
+.x{
+  background: #E6E1E1;
+}
+.comment_wrapper{
+  margin-bottom: 8%;
+}
+.comment_wrapper h5{
+  padding-left: 1rem;
+}
+.collapsible-body .comment_wrapper{
+  margin-bottom: 0;
+}
+.collapsible-body p, .comment_wrapper p{
+  padding: 1rem 0rem 1rem 1.5rem;
+}
+.collapsible-body .comment_wrapper .modal-trigger{
+  width: 100%;
+  background: #2196f3;
+}
+.collapsible-body .comment_wrapper .modal-trigger:after{
+  content: ' on Comment above';
+}
+.collapsible-body .comment_wrapper > .collapsible{
+  box-shadow: 0 0 0 0!important;
+  border: 0;
+}
 .float_l{
   float: left;
 }
