@@ -4,6 +4,7 @@ function renderComments( $comments, $depth=0 ) {
 	if( !$comments ) return;
 	?>
 	<?php
+	$usr = Login::checkUser()["user_id"];
 	foreach( $comments as $comment ) {
 		$comment = new Comment( $comment["cid"] );
 		$p = new Profile( $comment->owner );
@@ -11,24 +12,32 @@ function renderComments( $comments, $depth=0 ) {
 		$id = $comment->id;
 		$text = $comment->text;
 		?>
-		<h5><i class="material-icons">account_circle</i><?php echo $title;?></h5>
-		<p><?php echo $text;?></p>
-		<?php $answers = Comment::getAnswers($comment->id); if(count($answers)>0) {?>
+		<div class="comment_wrapper"><h5><?php echo $title;?> wrote...</h5>
+		<p><?php echo $text;?></p><span class="float_r"><?php 
+
+		if($usr == $comment->owner || $usr == $comment->receiver){
+	echo '<i class="material-icons">delete</i>';
+	if($usr = Login::checkUser()["user_id"] == $comment->owner){
+		echo '<i class="material-icons">edit</i>';
+}	
+	echo '</span>';
+}
+
+		 $answers = Comment::getAnswers($comment->id); if(count($answers)>0) {?>
 		<ul class="collapsible" data-collapsible="expandable">
-		<li style="padding-left: <?php echo $depth*10;?>px">
-		  <div class="collapsible-header">Comments</div>
+		<li class="<?php echo ($depth % 2 != 0)? 'crazy-color':'decent-color';?>">
+		  <div class="collapsible-header">Comments on Comment</div>
 		  <div class="collapsible-body">
 		  	<?php renderComments($answers, $depth+1); ?>
 		  </div>
 		</li>
 		</ul>
+		
 		<?php } ?>
-		<a class="modal-trigger waves-effect waves-light btn" onclick="$('#field_user')[0].value='comment:<?php echo $id;?>'" href="#writecomment">Comment</a>
+		<a class="modal-trigger waves-effect waves-light btn" onclick="$('#field_user')[0].value='comment:<?php echo $id;?>'" href="#writecomment">Comment</a></div>
 		<?php
 	}
 	?>
-	
-	<br>
 	<?php
 }
 if(!($usr = Login::checkUser()["user_id"])) return;
@@ -41,7 +50,7 @@ else {
 if( $user ) {
 	renderComments( Comment::getComments($user) );
 ?>
-<a class="modal-trigger waves-effect waves-light btn" onclick="$('#field_user')[0].value='user:<?php echo $user;?>'" href="#writecomment">Comment</a>
+<a class="modal-trigger waves-effect waves-light btn col s12" onclick="$('#field_user')[0].value='user:<?php echo $user;?>'" href="#writecomment">New Comment</a>
 <div id="writecomment" class="modal">
 	<div class="modal-content">
 	  <form id="createform" method="POST" action="/api/comment/post/"><h4>Schreib etwas (nettes)!</h4>
