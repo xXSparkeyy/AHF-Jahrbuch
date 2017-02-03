@@ -1,3 +1,11 @@
+.float_r{
+  width: 100%;
+  display: block;
+  text-align: right;
+}
+.float_r i{
+  font-size: 32px;
+}
 .crazy-color{
   background: #E6E1E1;
 }
@@ -6,6 +14,7 @@
 }
 .comment_wrapper{
   margin-bottom: 8%;
+  text-align: left;
 }
 .comment_wrapper h5{
   padding-left: 1rem;
