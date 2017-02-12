@@ -12,9 +12,12 @@ function renderComments( $comments, $depth=0 ) {
 		$id = $comment->id;
 		$text = $comment->text;
 		?>
-		<div class="comment_wrapper"><h5><?php echo $title;?> wrote...</h5>
-		<p><?php echo $text;?></p><span class="float_r"><?php 
-
+		<div class="comment_wrapper"><h7><?php echo $title;?></h7>
+		<p><?php echo $text;?></p><span class="float_r">
+	<a class="modal-trigger" onclick="$('#field_user')[0].value='comment:<?php echo $id;?>'" href="#writecomment">
+		<i class="material-icons">reply</i>
+	</a>
+	<?php
 		if($usr == $comment->owner || $usr == $comment->receiver){
 	echo '<i class="material-icons">delete</i>';
 	if($usr = Login::checkUser()["user_id"] == $comment->owner){
@@ -25,20 +28,17 @@ function renderComments( $comments, $depth=0 ) {
 
 		 $answers = Comment::getAnswers($comment->id); if(count($answers)>0) {?>
 		<ul class="collapsible" data-collapsible="expandable">
-		<li class="<?php echo ($depth % 2 != 0)? 'crazy-color':'decent-color';?>">
-		  <div class="collapsible-header">Comments on Comment</div>
-		  <div class="collapsible-body">
+		<li class="<?php echo ($depth % 2 == 0)?"crazy":"decent";?>-color itm">
+		  <div class="collapsible-header"><i class="material-icons">&#xE315;</i> <?php echo count($answers); ?> Antworte(n)</div>
+		  <div class="collapsible-body"><br>
 		  	<?php renderComments($answers, $depth+1); ?>
 		  </div>
 		</li>
 		</ul>
+		<br>
+		<?php }
 		
-		<?php } ?>
-		<a class="modal-trigger waves-effect waves-light btn" onclick="$('#field_user')[0].value='comment:<?php echo $id;?>'" href="#writecomment">Comment</a></div>
-		<?php
 	}
-	?>
-	<?php
 }
 if(!($usr = Login::checkUser()["user_id"])) return;
 if( isset($_GET["user"] ) ) $user = $_GET["user"];
@@ -50,7 +50,8 @@ else {
 if( $user ) {
 	renderComments( Comment::getComments($user) );
 ?>
-<a class="modal-trigger waves-effect waves-light btn col s12" onclick="$('#field_user')[0].value='user:<?php echo $user;?>'" href="#writecomment">New Comment</a>
+<br><br>
+<a class="modal-trigger waves-effect waves-light btn col s12" onclick="$('#field_user')[0].value='user:<?php echo $user;?>'" href="#writecomment">Schreib was!</a>
 <div id="writecomment" class="modal">
 	<div class="modal-content">
 	  <form id="createform" method="POST" action="/api/comment/post/"><h4>Schreib etwas (nettes)!</h4>
