@@ -1,13 +1,10 @@
 <?php require_once( "db.php" );
 
-define( "MOODLE_LOGIN_OK",              0 );
-define( "MOODLE_LOGIN_WRONG_CRED",      1 );
-define( "MOODLE_NO_CONNECTION",         2 );
-define( "MOODLE_GET_DATA_ERROR",        3 );
-define( "MOODLE_GET_DATA_OK",           4 );
-define( "REGISTRATION_USER_EXISTS",     5 );
-define( "REGISTRATION_WRITE_SQL_ERROR", 6 );
-define( "REGISTRATION_SUCCESSFULL",     7 );
+define( "TAN_LOGIN_OK",                 0 );
+define( "TAN_NOT_FOUND",                1 );
+define( "REGISTRATION_SUCCESSFULL",     2 );
+define( "REGISTRATION_USER_EXISTS",     3 );
+define( "REGISTRATION_WRITE_SQL_ERROR", 4 );
 
 class Registration {
 
@@ -17,6 +14,8 @@ class Registration {
 	//#
 	//#######
 	private $error;
+
+    public function explanation() {return "Registriere dich auf bit.ly/Gw5Hf mit diesen Daten und wähle ein Passwort."; }
 	
 	//#######
 	//#
@@ -32,83 +31,100 @@ class Registration {
 	//#######
 	public function getErrorMessage() {
 		switch( $this->error ) {
-			case MOODLE_LOGIN_WRONG_CRED     : return "Falsche Moodle Anmeldedaten.";
-			case MOODLE_GET_DATA_ERROR       : return "Es gibt ein Problem mit Moodle";
-			case REGISTRATION_USER_EXISTS    : return "Du hast dich bereits registriert";
-			case REGISTRATION_WRITE_SQL_ERROR: return "Es gibt ein Problem mit der Datenbank";
+			case TAN_NOT_FOUND            : return "Die TAN wurde nicht gefunden";
+            case REGISTRATION_USER_EXISTS : return "Dieser Nutzer Existiert bereits";
 		}
 	}
+
+    //#######
+	//#
+	//#	    Generates TANs
+	//#
+	//#######
+
+    public function createTANs( $list ) { // $list contains [firstname, lastname]
+        $db = new DB();
+        if( !$db ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
+        foreach( $list as $entry ) {
+            Registration::createTAN( $db, $entry["firstname"], $entry["lastname"] );
+        }
+    }
+
+    //#######
+	//#
+	//#	    Generates TAN
+	//#
+	//#######
+
+    static function kii($len = 8) {
+        $k="";
+        $kons = [1,5,9,15,21];
+        for( $i = 0; $i < $len; $i++ ) {
+            $k.= $i%2==0?chr(64+$kons[random_int(0,4)]):chr(random_int(65,90));
+        }
+        return $k;
+    }
+
+    public function createTAN( $db, $fnm, $lnm ) { // $list contains [firstname, lastname]
+        $username = Registration::generateUsername( $db, $fnm, $lnm );
+        $id = Registration::kii();
+        if(!($result = $db->query( "INSERT INTO `login_tan` (`id`,`username`,`name`,`surname`) VALUES ('§0', '§1', '§2', '§3')",[$id,$username,$fnm,$lnm] ) ) ) {error_log($db->error);return; }
+    }
 	
+    //#######
+	//#
+	//#	    Lists TANs
+	//#
+	//#######
+
+    static function listTans() {
+        $db = new DB();
+        if( !$db ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
+        if(!($result = $db->query( "SELECT `*` FROM `login_tan`",  []) ) ) {error_log($db->error);return; }
+        return $db->resultToArray( $result );
+    }
 	
 	//#######
 	//#
-	//#	    Registrated user id
+	//#	    Generates User ID
 	//#
 	//#######
-	public $user = false;
+
+    protected function generateUsername( $db, $name, $surname ) {
+        $result;$user;
+        $salt = 0;
+        do {
+           $user = $name.$surname.($salt==0?"":$salt);
+           if(!($result = $db->query( "SELECT `user_id` FROM `profiles` WHERE `user_id` Like '§0'",[$user] ) ) ) {error_log($db->error);return; }
+           $salt++;
+        } while( $result->num_rows != 0 );
+        return $user;
+    }
+	
+
+    public $user = false;
 
 	//#######
 	//#
-	//#	    Logs into Moodle to validate the User
+	//#	    Checks TAN
 	//#
 	//#######
-	protected function moodleLogin( $username, $password ) {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "https://moodle.ahfs-detmold.de/gymnasium/login/index.php");
-		curl_setopt($ch, CURLOPT_HEADER, True);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, True);
-		curl_setopt($ch, CURLOPT_REFERER, "https://moodle.ahfs-detmold.de/gymnasium/user/");
-		curl_setopt($ch, CURLOPT_COOKIE, "MoodleSession=0");
-		curl_setopt($ch, CURLOPT_POST, True);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, "username=$username&password=$password");
-		$data = curl_exec($ch);
-		curl_close($ch);
-		$location = "";
-		$token = false;
-		$data = preg_split ('/[\n\r]/', $data);
-		foreach( $data as $line ) {
-			$line = explode( ": ", $line );
-			if( $line[0] == "Location") {
-				if( $line[1] == "http://moodle.ahfs-detmold.de/gymnasium/login/index.php" ) return [ "status"=>MOODLE_LOGIN_WRONG_CRED, "token"=>$token ];
-				$location = $line[1];
-			}
-			if( $line[0] == "Set-Cookie") {
-				if( explode("=", $line[1])[0] == "MoodleSession" ) {
-						$token = explode( ";", explode("=", $line[1])[1] )[0];
-				}
-			}
-		}
-		$c = curl_init();
-		curl_setopt($c, CURLOPT_URL, $location);
-		curl_setopt($c, CURLOPT_RETURNTRANSFER, True);
-		curl_setopt($c, CURLOPT_HEADER, True);
-		curl_setopt($c, CURLOPT_COOKIE, "MoodleSession=$token");		
-		$data = curl_exec($c);
-		return [ "status"=>MOODLE_LOGIN_OK, "token"=>$token ];
-	}
-	//#######
-	//#
-	//#	    Retrives the First and last nmae From Moodle
-	//#
-	//#######
-	protected function getMoodleData( $token ) {
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, "https://moodle.ahfs-detmold.de/gymnasium/user/");
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, True);
-		curl_setopt($ch, CURLOPT_COOKIE, "MoodleSession=$token");
-				
-		$data = curl_exec($ch);
-		curl_close($ch);
-		if( preg_match( '/anzeigen"\s*>(([A-Z|a-z|0-9|\-|ä|ü|ö|ß|\s]*)\s([A-Z|a-z|0-9|\-|ä|ü|ö|ß]*))<\/a>/i', $data, $matches ) != 1 ) return [ "status"=>MOODLE_GET_DATA_ERROR, "name"=>["",""] ];
-		return ["status"=>MOODLE_GET_DATA_OK, "name"=>[$matches[2],$matches[3]] ];
-	}
-	//#######
-	//#
-	//#	    Write the gathered Information into the Database
-	//#
-	//#######
+
+    protected function tanLogin( $tan ) {
+        $db = new DB();
+        if( !$db ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
+        if(!($result = $db->query( "SELECT `*` FROM `login_tan` WHERE `id` Like '§0'",[$tan] ) ) ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
+        if( $result->num_rows == 0 ) return TAN_NOT_FOUND;
+        $result = $db->resultToArray( $result, 1 )[0];
+        //$this->generateUsername( $db, $result["name"], $result["surname"] );                ############# MOVE TO CREATE TANS
+        $this->user = $result["username"];        
+        $result["status"] = TAN_LOGIN_OK;
+        if(!($rslt = $db->query( "DELETE FROM `login_tan` WHERE `id` Like '§0'",[$tan] ) ) ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
+        return $result;
+    }
+	
 	protected function writeEntry( $nm, $pw, $fn, $ln ) {
-		$pw = password_hash($pw, PASSWORD_DEFAULT);
+		//$pw = password_hash($pw, PASSWORD_DEFAULT);
 		$db = new DB();
 		if( !$db ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
 		if(!($result = $db->query( "SELECT `id` FROM `login_info` WHERE `id` Like '§0'",[$nm] ) ) ) {error_log($db->error);return REGISTRATION_WRITE_SQL_ERROR;}
@@ -124,18 +140,14 @@ class Registration {
 	//#	    Merges all the steps and checks for errors
 	//#
 	//#######
-	public function register( $username, $password ) {
-		$moodleLogin = $this->moodleLogin( $username, $password );
-		if( $moodleLogin["status"] != MOODLE_LOGIN_OK ) {
-			$this->error = $moodleLogin["status"];
+	public function register( $tan, $password ) {
+		$tanLogin = $this->tanLogin( $tan );
+        
+		if( $tanLogin["status"] != TAN_LOGIN_OK ) {
+			$this->error = $tanLogin;
 			return false;
 		}
-		$moodleData = $this->getMoodleData( $moodleLogin["token"] );
-		if( $moodleData["status"] != MOODLE_GET_DATA_OK ) {
-			$this->error = $moodleData["status"];
-			return false;
-		}
-		$status = $this->writeEntry( $username, $password, $moodleData["name"][0], $moodleData["name"][1] );
+		$status = $this->writeEntry( $this->user, $password, $tanLogin["name"], $tanLogin["surname"] );
 		if( $status != REGISTRATION_SUCCESSFULL ) {
 			$this->error = $status;
 			return false;

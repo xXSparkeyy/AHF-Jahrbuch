@@ -46,8 +46,8 @@
 									$img = $member->getAvatar();
 									$controls = !Group::isMod(GROUP,$login_user["user_id"])?"":'
 									<div class="controls">
-											<a id="modbutton'.$id.'" href="javascript:'.(Group::isMod(GROUP,$id,true)?"revokeMod('$id')\" enabled":"grantMod('$id')\"").' class="modbutton btn-floating btn-large waves-effect waves-light red left"><i class="material-icons">star</i></a>
-											<a href="javascript:kick(\''.$id.'\')" class="btn-floating btn-large waves-effect waves-light red right"><i class="material-icons">block</i></a>
+											<a id="modbutton'.$id.'" href="javascript:'.(Group::isMod(GROUP,$id,true)?"revokeMod('$id')\" enabled":"grantMod('$id')\"").' class="modbutton btn-floating btn-medium waves-effect waves-light red left"><i class="material-icons">star</i></a>
+											<a href="javascript:kick(\''.$id.'\')" class="btn-floating btn-medium waves-effect waves-light red right"><i class="material-icons">block</i></a>
 										</div>';
 								echo "
 								<div id='member$id' class='col s6 m4 l3' style=\"padding: 2%\">
@@ -134,26 +134,42 @@
 						 	}
 						 	x.send();
 						 }
+                        function showImage( i ) {
+                            $("#fullsizeimg")[0].style.backgroundImage = "url( '"+i.getAttribute( "image" )+"' )";
+                            $("#fullsizeimgwrapper")[0].setAttribute("show","");$("#fullsizeimg")[0].setAttribute("show","");                            
+                        }
+                        function hideImage() {
+                            $("#fullsizeimg")[0].style.backgroundImage = "";
+                            $("#fullsizeimgwrapper")[0].removeAttribute( "show", "" );$("#fullsizeimg")[0].removeAttribute( "show", "" );                            
+                        }
 						 function reloadImage() {
 						 	var g = document.getElementById( "gallery" )
 						 	var x = new XMLHttpRequest()
-						 	x.open( "GET", "/api/getimages/" );
+						 	x.open( "GET", "/api/image/get/" );
 						 	x.onreadystatechange = function() {
 						 		if( x.readyState == 4 && x.status == 200 ) {
 						 			eval( "var img = "+x.responseText )
 									g.innerHTML = "";
-						 			for( var i in img )
-						 			g.innerHTML += '<img onclick="" src="'+img[i]+'" class="materialboxed responsive-img col s6 m4 l2" style="margin:0" alt=""  width="200px" width="200px">';
-						 			$('.materialboxed').materialbox();
-						 			var p = $('.materialboxed');
-						 			for( i in p ) {
-						 				if( p[i].parentElement )
-						 					p[i].parentElement.innerHTML += '<div class="controls"><a href="javascript:alert(this.source)" class="btn-floating btn-large waves-effect waves-light red right"><i class="material-icons">delete</i></a></div>';
-						 			}
-						 		}
+						 			for( var i in img ) {
+						     			var str = '<div onclick="showImage( this )" image="'+img[i]+'" style="background-image:url('+img[i]+')" class="col s6 m4 l4 group-image-item">';
+                                        <?php if( Group::isMod(GROUP,$login_user["user_id"]) ) {?>
+                                        str+='<a onclick="deleteImage( this.parentElement );" href="#" class="btn-floating btn-small waves-effect waves-light red"><i class="material-icons">delete</i></a>';
+                                        <?php }?>
+                                        g.innerHTML+=str+"</div>"
+                                    }				 		
+                                }
 						 	}
 						 	x.send();
 						 }
+                        function deleteImage( i ) {
+                            var g = document.getElementById( "gallery" )
+						 	var x = new XMLHttpRequest()
+						 	x.open( "GET", "/api/image/delete/?group=<?php echo GROUP;?>&image="+i.getAttribute( "image" ));
+						 	x.onreadystatechange = function() {
+                                if( x.readyState == 4 ) reloadImage();
+                            }
+                            x.send();
+                        }
      				</script>
 
  			</div>
@@ -182,7 +198,7 @@
 
   <div id="deletegroup" class="modal">
 	<div class="modal-content">
-	  <form id="deleteform" method="POST" action="/group/setValues.php"><h4>Are you sure?</h4>
+	  <form id="deleteform" method="POST" action="/group/setValues.php"><h4>Gruppe wirklich löschen?</h4>
 	  <input type="hidden" name="deletegroup" value="true">
 	  <input type="hidden" name="group" value="<?php echo GROUP; ?>">
 	  </form>
@@ -223,3 +239,8 @@
 	      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Abbrechen</a>
 	    </div>
 	  </div>
+
+    <div onclick="hideImage()" id="fullsizeimgwrapper"></div>
+     <div onclick="hideImage()" id="fullsizeimg"></div>
+    </div>
+

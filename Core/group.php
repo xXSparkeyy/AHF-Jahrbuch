@@ -79,9 +79,10 @@ class Group {
 	}
 
 	public function removeGroup() {
+        print_r( "Removingggg" );
 		$db = new DB();
-		$id = $this->id; $db->query( "DELETE FROM `group_meta` WHERE `group_id` Like §1", [$id] );
-		$db->query( "DELETE FROM `group_participants` WHERE `group_id` Like $id" );
+		$id = $this->id; $db->query( "DELETE FROM `group_meta` WHERE `group_id` Like §0", [$id] );
+		$db->query( "DELETE FROM `group_participants` WHERE `group_id` Like §0", [$id] );
 	}
 	public static function createGroup( $name, $desc ) {
 		$db = new DB();

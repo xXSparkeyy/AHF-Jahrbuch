@@ -13,7 +13,6 @@
 		}
 		catch(Exception $e) {}
 	}
-	
 	if( !$group      ) return;
 	if( $group==""   ) return;
 	if( $group=="."  ) return;

@@ -64,6 +64,7 @@
 		 </div>
      </div>
      <div class="row">
+    <?php if( Group::inGroups(PROFILEUSR) ) { ?>
      <h2>Gruppen</h2>
      	<?php
      	foreach(Group::inGroups(PROFILEUSR) as $group ) {
@@ -76,6 +77,7 @@
 				</div>
 			</a>";
 		}
+}
 		?>
      </div>
      <div id="uploadview" class="modal bottom-sheet">
@@ -131,24 +133,8 @@
      	}
      	x.send();
      }
-     var target = ""
 	var user = "<?php echo $p->getID();?>"
-	function writeComment( text ) {
-		var x = new XMLHttpRequest();
-		x.open( "POST", "/api/comment/post/?text="+text+(target?"&parent="+target:"&user"+user) );
-		x.onreadystatechange = function() {
-			if( x.readyState == 4 ) reloadComments();
-		}
-		x.send();
-	}
-	function loadComments() {
-		var x = new XMLHttpRequest();
-		x.open( "POST", "/api/comment/get/");
-		x.onreadystatechange = function() {
-			if( x.readyState == 4 ) { $("#comments")[0].innerHTML = x.responseText; $(".modal-trigger").leanModal(); $('.collapsible').collapsible(); }
-		}
-		x.send();
-	}
+    <?php Comment::javascript(); ?>
      </script>
      <style>
      	#adminbutton {

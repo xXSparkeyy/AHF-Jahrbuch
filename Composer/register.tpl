@@ -6,18 +6,18 @@
         </div>
      </div>
      <div class="row s12">
-		<p class="center-align">Benutze deine Moodle Login Daten um dich zu registrieren</p>
+		<p class="center-align">Benutze deinen Schlüssel und wähle ein Passwort um dich zu registrieren</p>
      </div>
      <div class="row s12">
         <div class="input-field col s12 m4 offset-m4">
-          <input name="user_name" type="text" class="validate">
-          <label for="user_name">Benutzername</label>
+          <input name="user_tan" type="text" class="validate">
+          <label for="user_tan">Schlüssel</label>
         </div>
      </div>
      <div class="row s12">
         <div class="input-field col s12 m4 offset-m4">
           <input name="user_pw" type="password" class="validate">
-          <label for="user_name">Passwort</label>
+          <label for="user_pw">Passwort</label>
         </div>
      </div>
      <?php if(REGISTERERROR) echo '<div class="row s12">

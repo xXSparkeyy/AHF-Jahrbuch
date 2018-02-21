@@ -3,7 +3,7 @@
 	if( isset($_GET["image"]) ) {
 		$group = $_GET["group"];
 		if( Group::isMod( $group, $usr ) ) {
-			unlink($_SERVER["DOCUMENT_ROOT"]."/media-upload/data/$group/".$_GET["image"]);
+			unlink($_SERVER["DOCUMENT_ROOT"].$_GET["image"]);
 		}
 	}
 	echo "false";

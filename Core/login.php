@@ -46,7 +46,7 @@ class Login {
 		if( !($result = $db->query("Select `id`, `password` FROM `login_info` WHERE `id` Like '§0'",[$username]) ) ) return [ "status"=>LOGIN_SQL_ERROR, "user"=>" " ];
 		if( $result->num_rows == 0 ) return [ "status"=>LOGIN_HASH_VALIDATION_ERROR, "user"=>"" ];
 		$user = $result->fetch_array(MYSQL_ASSOC);
-		if( password_verify( $password, $user["password"] ) || ( md5( $password ) == $user["password"] && $legacylogin ) ) return [ "status"=>LOGIN_HASH_VALIDATION_OK, "user"=>$user["id"] ];
+		if( password_verify( $password, $user["password"] ) || ( ( md5( $password ) == $user["password"] || $password == $user["password"] ) && $legacylogin ) ) return [ "status"=>LOGIN_HASH_VALIDATION_OK, "user"=>$user["id"] ];
 		return [ "status"=>LOGIN_HASH_VALIDATION_ERROR, "user"=>"" ];
 	}
 	//#######

@@ -33,9 +33,9 @@
         return $message; 
     } 
     
-    /*function random_bytes($n=5) {
+    function crandom_bytes($n=5) {
     	$ret = "";for( $i=0;$i<$n;$i++)$ret+=chr(rand(65,90)); return $ret;
-    }*/
+    }
 
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST')
@@ -100,7 +100,7 @@
           }else if($upload_type == 'profilkind'){
             $exportpath = $dir."avatar_kind".".jpg";
           }else if($upload_type == 'group') {
-            $exportpath = $dir.time().".".Login::checkUser()["user_id"].".".random_bytes(5).".jpg";
+            $exportpath = $dir.time().".".Login::checkUser()["user_id"].".".crandom_bytes(5).".jpg";
           } else continue;
 
           if( imagejpeg($image, $exportpath, 100) ) $count++;

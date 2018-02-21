@@ -8,10 +8,10 @@
 		$id     = $survey["survey_meta_id"];
 		$title  = $survey["survey_title"];
 		$desc   = $survey["survey_description"];
-		$visible= $survey["survey_visible"]?"":"<i class='material-icons'>lock</i>";
+		$visible= ($survey["flags"]["voteable"]?"":"<i class='material-icons'>lock</i>").($survey["flags"]["visible" ]?"":"<i class='material-icons'>visibility_off</i>");
 		echo "<div class='col card-panel grey lighten-5 z-depth-1 s12 l8 offset-l2'><h2><a href='$id'>$visible $title</a></h2><p>$desc</p></div>";
 	}
-	if( $isAdmin ) echo "<form class='col s12 l8 offset-l2' method='post' action='/Surveys/setValues.php'><input class='btn green' type='submit' name='addSurvey' value='Add a new One!'></form>";
+	if( $isAdmin ) echo "<form class='col s12 l8 offset-l2' method='post' action='/Surveys/setValues.php'><input class='btn green' type='submit' name='addSurvey' value='Neue Umfrage'><input class='btn green' type='submit' name='addUserSurvey' value='Neue Gruppen Umfrage'></form>";
 ?>
 </div>
 </div>

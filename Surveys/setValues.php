@@ -8,16 +8,25 @@
 		Log::msg( "Survey", "$usr added a Survey" );
 		return;
 	}
+    if( isset($_POST["addUserSurvey"]) ) {
+		$s = Survey::createSurvey( "New Survey", "Looks like some pretty nice space, why not insert a description here?", "*" );
+		http_response_code( 302 );
+		header( "Location: /Surveys/".$s->getID()."/edit/" );
+		Log::msg( "Survey", "$usr added a Survey" );
+		return;
+	}
 	if( count( $_POST ) > 0 && Login::isAdmin($usr ) ) {
 		$sid = $_POST["survey_id"];
 		$survey = new Survey( $sid );
 		$title= "";
 		$desc = "";
 		$visib= 0;
+        $gp = "";
 		foreach( $_POST as $id => $value ) {
 			if( $id == "survey_id" ) { continue; }
 			if( $id == "title" ) { $title = $value; continue; }
 			if( $id == "desc"  ) { $desc  = $value; continue; }
+            if( $id == "group" ) { $gp    = $value; continue; }
 			if( $id == "flag" ) { foreach( $value as $i ) { $visib+=$i; } continue; }
 			if( $id == "new"   ) {
 				foreach( $value as $t ) {
@@ -31,7 +40,7 @@
 			}
 			$survey->editQuestion($id,$value);
 		}
-		$survey->setMeta( $title, $desc, $visib );
+		$survey->setMeta( $title, $desc, $visib, $gp );
 		Log::msg( "Survey", "$usr edited Survey $sid" );
 	}
 	http_response_code( 302 );

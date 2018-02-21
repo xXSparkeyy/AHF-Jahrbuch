@@ -5,12 +5,15 @@
 	}
 	else {
 		define( "CMSLOADSUBTPL", "register.tpl" );
-		if( isset($_POST["user_name"]) && isset($_POST["user_pw"]) ) {
+		if( isset($_POST["user_tan"]) && isset($_POST["user_pw"]) )
+            if( strlen( $_POST["user_pw"] ) < 6 )
+                define( "REGISTERERROR", "Passwort zu kurz" );
+            else {
 			$l = new Registration();
-			$l->register( $_POST["user_name"], $_POST["user_pw"] );
-			$login = new Login( $_POST["user_name"], $_POST["user_pw"] );
+			$l->register( $_POST["user_tan"], $_POST["user_pw"] );
 			if( !$l->getError() ) {
-				$usr = $login->user;
+                $login = new Login( $l->user, $_POST["user_pw"] );
+				$usr = $l->user;
 				Log::msg( "Profile", "$usr joined" );
 				header( "Location: /profile/$usr/edit/" );
 				return;

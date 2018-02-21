@@ -4,7 +4,9 @@
 		<?php if (Login::isAdmin(Login::checkUser()['user_id'])){ ?>
 			<div class='col s6'>
 				<ul class='collection with-header'>
-					<li class='collection-header'><h5>Benutzer (<?php $profiles = Profile::listProfiles( ); echo count( $profiles ) ?>)</h5></li>
+					<li class='collection-header'><h5>Benutzer (<?php $profiles = Profile::listProfiles( ); echo count( $profiles ) ?>)
+                    <a href="/Signup/Tanmanager/" style="vertical-align:middle;font-size:inherit" class="material-icons">add_circle_outline</a>                    
+                    </h5></li>
 						<div class='dashboard_info_container'>
 			    <?php
 						foreach( $profiles as $itm ) {
@@ -16,7 +18,7 @@
 							</li></a>
 							";
 						}
-						?>
+						?> 
 						</div>
 			  </ul>
 			</div>
@@ -110,7 +112,7 @@
 			
 			  
 		<?php }else{ ?>
-		<h1>Abitur 2017</h1>
+		<h1>Abschluss 2017</h1>
 		<?php foreach(Profile::listProfiles() as $usr ) {
 				$member = new Profile( $usr["user_id"], false );
 				$name = $member->getFirstName()." ".$member->getLastName();
